@@ -199,8 +199,8 @@
                         </div>
                         <div class="buyer-summary-totals">
                             <div><span>Subtotal</span><strong id="buyer-subtotal">TZS 0</strong></div>
-                            <div><span>Delivery</span><strong id="buyer-delivery">TZS 12,000</strong></div>
-                            <div class="total-row"><span>Total</span><strong id="buyer-total">TZS 12,000</strong></div>
+                            <div><span>Delivery (flat fee)</span><strong id="buyer-delivery">TZS 500</strong></div>
+                            <div class="total-row"><span>Total</span><strong id="buyer-total">TZS 500</strong></div>
                         </div>
                         <button class="btn btn-primary buyer-place-order" type="button">Place crop order</button>
                     </aside>
@@ -225,6 +225,7 @@
                             <span>Delivery location</span>
                             <input type="text" name="location" placeholder="e.g. Morogoro market" required>
                         </label>
+                        <p class="purchase-fee" id="purchase-fee">Delivery fee: TZS 500 (flat)</p>
                         <button class="btn btn-primary purchase-submit" type="submit">Pay with Snippe</button>
                         <p class="purchase-note">You will enter your name and phone number on the secure payment page.</p>
                     </form>
@@ -493,6 +494,7 @@
     const tradeInsuranceQuote = document.getElementById("trade-insurance-quote");
     const tradeQuantity = document.getElementById("trade-quantity");
     const cart = new Map();
+    const DELIVERY_FEE = 500;
 
     function visibleProducts() {
         return products.filter((product) => !product.hidden);
@@ -536,7 +538,7 @@
 
         const items = [...cart.values()];
         const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const delivery = items.length ? 12000 : 0;
+        const delivery = items.length ? DELIVERY_FEE : 0;
         const total = subtotal + delivery;
 
         buyerSubtotal.textContent = formatMoney(subtotal);

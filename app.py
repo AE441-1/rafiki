@@ -1315,7 +1315,7 @@ CROP_PRICES = {
     "Green beans": 1800,
     "Sweet potatoes": 900,
 }
-CROP_DELIVERY_FEE = 12000
+CROP_DELIVERY_FEE = 500  # flat delivery fee in TZS, added to every order
 
 
 @app.route("/api/market/checkout", methods=["POST"])
@@ -1356,7 +1356,7 @@ def create_crop_checkout():
     body = {
         "amount": amount,
         "currency": "TZS",
-        "description": f"Rafiki crop order: {description}"[:200],
+        "description": f"Rafiki crop order: {description} + TZS {CROP_DELIVERY_FEE:,} delivery"[:200],
         "metadata": {
             "items": items,
             "delivery_fee": CROP_DELIVERY_FEE,
