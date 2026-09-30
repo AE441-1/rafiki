@@ -22,3 +22,5 @@ class Config:
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "")
     MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "true").strip().lower() == "true"
+    SNIPPE_API_KEY = os.getenv("SNIPPE_API_KEY", "")
+    SNIPPE_BASE_URL = os.getenv("SNIPPE_BASE_URL", "https://api.snippe.sh")

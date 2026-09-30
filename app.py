@@ -1308,6 +1308,97 @@ def market_json_error(message, status_code):
     return {"error": message}, status_code
 
 
+# Prices for the buyer market cards in templates/portal.html (TZS per unit).
+CROP_PRICES = {
+    "Fresh tomatoes": 24000,
+    "Dry maize": 1200,
+    "Green beans": 1800,
+    "Sweet potatoes": 900,
+}
+CROP_DELIVERY_FEE = 12000
+
+
+@app.route("/api/market/checkout", methods=["POST"])
+def create_crop_checkout():
+    """Create a Snippe hosted checkout session for a crop order.
+
+    The buyer's name and phone number are collected on the Snippe payment
+    page, so the request only needs the items and the delivery location.
+    """
+    if not app.config.get("SNIPPE_API_KEY"):
+        return market_json_error("Payments are not configured yet. Set SNIPPE_API_KEY.", 503)
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return market_json_error("Enter the order details.", 400)
+
+    location = str(payload.get("location", "")).strip()
+    raw_items = payload.get("items")
+    if not isinstance(raw_items, list) or not raw_items:
+        return market_json_error("Add at least one crop to the order.", 400)
+
+    items = []
+    subtotal = 0
+    for raw in raw_items:
+        name = str((raw or {}).get("name", "")).strip()
+        try:
+            quantity = int((raw or {}).get("quantity", 0))
+        except (TypeError, ValueError):
+            quantity = 0
+        if name not in CROP_PRICES or quantity < 1:
+            return market_json_error("One of the crops or quantities is not valid.", 400)
+        items.append({"name": name, "quantity": quantity, "price": CROP_PRICES[name]})
+        subtotal += CROP_PRICES[name] * quantity
+
+    amount = subtotal + CROP_DELIVERY_FEE
+    description = ", ".join(f"{item['quantity']} x {item['name']}" for item in items)
+
+    body = {
+        "amount": amount,
+        "currency": "TZS",
+        "description": f"Rafiki crop order: {description}"[:200],
+        "metadata": {
+            "items": items,
+            "delivery_fee": CROP_DELIVERY_FEE,
+            "location": location,
+            "user_id": session.get("user_id"),
+        },
+        "expires_in": 3600,
+    }
+    # Snippe only accepts HTTPS redirect URLs, so skip it during local HTTP development.
+    redirect_url = url_for("supplier_market", view="buyer", payment="success", _external=True)
+    if redirect_url.startswith("https://"):
+        body["redirect_url"] = redirect_url
+
+    try:
+        response = requests.post(
+            f"{app.config['SNIPPE_BASE_URL'].rstrip('/')}/api/v1/sessions",
+            json=body,
+            headers={
+                "Authorization": f"Bearer {app.config['SNIPPE_API_KEY']}",
+                "Content-Type": "application/json",
+            },
+            timeout=20,
+        )
+        result = response.json()
+    except (requests.RequestException, ValueError) as error:
+        print(f"Snippe session error: {error}")
+        return market_json_error("Could not reach the payment provider. Try again shortly.", 502)
+
+    data = result.get("data") if isinstance(result, dict) else None
+    checkout_url = (data or {}).get("payment_link_url") or (data or {}).get("checkout_url")
+    if not response.ok or not checkout_url:
+        print(f"Snippe session rejected ({response.status_code}): {result}")
+        message = (result.get("error") or {}).get("message") if isinstance(result, dict) else None
+        return market_json_error(message or "The payment session could not be created.", 502)
+
+    return {
+        "checkout_url": checkout_url,
+        "reference": data.get("reference"),
+        "amount": amount,
+    }
+
+
 @app.route("/api/market/listings", methods=["POST"])
 def create_crop_listing():
     if session.get("role") != "customer":

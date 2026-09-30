@@ -218,14 +218,6 @@
                     <form class="purchase-form" id="purchase-form">
                         <input type="hidden" id="purchase-item" name="item">
                         <label>
-                            <span>Buyer name</span>
-                            <input type="text" name="buyer_name" placeholder="e.g. Asha Said" required>
-                        </label>
-                        <label>
-                            <span>Phone number</span>
-                            <input type="tel" name="phone" placeholder="e.g. +255 712 345 678" required>
-                        </label>
-                        <label>
                             <span>Quantity</span>
                             <input type="number" name="quantity" min="1" step="1" placeholder="e.g. 5" required>
                         </label>
@@ -233,7 +225,8 @@
                             <span>Delivery location</span>
                             <input type="text" name="location" placeholder="e.g. Morogoro market" required>
                         </label>
-                        <button class="btn btn-primary purchase-submit" type="submit">Confirm order</button>
+                        <button class="btn btn-primary purchase-submit" type="submit">Pay with Snippe</button>
+                        <p class="purchase-note">You will enter your name and phone number on the secure payment page.</p>
                     </form>
                     <p class="purchase-success" id="purchase-success" role="status" aria-live="polite"></p>
                 </div>
@@ -607,9 +600,13 @@
         });
     }
 
-    const requestedView = new URLSearchParams(window.location.search).get("view");
+    const pageParams = new URLSearchParams(window.location.search);
+    const requestedView = pageParams.get("view");
     const initialTab = tabs.find((tab) => tab.dataset.marketTab === requestedView);
     if (initialTab) initialTab.click();
+    if (pageParams.get("payment") === "success" && buyerStatus) {
+        buyerStatus.textContent = "Thank you! Your payment was received and a local farmer will contact you about delivery.";
+    }
 
     search.addEventListener("input", filterProducts);
     category.addEventListener("change", filterProducts);
@@ -645,7 +642,7 @@
         purchaseSuccess.textContent = "";
         purchaseModal.classList.remove("hidden");
         purchaseModal.setAttribute("aria-hidden", "false");
-        purchaseForm.querySelector("input[name='buyer_name']").focus();
+        purchaseForm.querySelector("input[name='quantity']").focus();
     }
 
     function closePurchaseModalHandler() {
@@ -669,39 +666,35 @@
         }
     });
 
+    async function startSnippeCheckout(items, location, statusTarget, button) {
+        const originalLabel = button ? button.textContent : "";
+        if (button) { button.disabled = true; button.textContent = "Opening payment..."; }
+        statusTarget.textContent = "Preparing your secure payment link...";
+        try {
+            const response = await fetch("/api/market/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items, location }),
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "The payment could not be started.");
+            statusTarget.textContent = `Redirecting to Snippe to pay ${formatMoney(result.amount)}...`;
+            window.location.href = result.checkout_url;
+        } catch (error) {
+            statusTarget.textContent = translateMarketText(error.message);
+            if (button) { button.disabled = false; button.textContent = originalLabel; }
+        }
+    }
+
     purchaseForm.addEventListener("submit", (event) => {
         event.preventDefault();
         if (!purchaseForm.reportValidity()) return;
 
         const formData = new FormData(purchaseForm);
-        const item = String(formData.get("item") || "Selected item");
-        const buyerName = String(formData.get("buyer_name") || "Buyer").trim();
+        const item = String(formData.get("item") || "");
         const quantity = Number(formData.get("quantity")) || 1;
-        const price = Number([...document.querySelectorAll(".buyer-market-card")].find((card) => card.querySelector(".buyer-purchase")?.dataset.item === item)?.dataset.price || 0);
-
-        const existingItem = cart.get(item);
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            cart.set(item, { name: item, quantity, price });
-        }
-
-        buyerStatus.textContent = `${buyerName}, your crop order for ${item} (${quantity}) is ready for local review.`;
-        purchaseSuccess.textContent = `Crop order request sent for ${item}. A local farmer will contact you soon.`;
-        updateCartSummary();
-
-        for (const button of document.querySelectorAll(".buyer-purchase")) {
-            if (button.dataset.item === item) {
-                button.textContent = "Ordered";
-                button.disabled = true;
-                button.classList.add("is-requested");
-                break;
-            }
-        }
-
-        setTimeout(() => {
-            closePurchaseModalHandler();
-        }, 1200);
+        const location = String(formData.get("location") || "").trim();
+        startSnippeCheckout([{ name: item, quantity }], location, purchaseSuccess, purchaseForm.querySelector(".purchase-submit"));
     });
 
     document.querySelectorAll(".buyer-cart-add").forEach((button) => {
@@ -723,8 +716,17 @@
             return;
         }
 
-        const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0) + 12000;
-        buyerStatus.textContent = `Crop order ready for local dispatch. Estimated total: ${formatMoney(total)}.`;
+        const location = window.prompt("Delivery location (e.g. Morogoro market)") || "";
+        if (!location.trim()) {
+            buyerStatus.textContent = "Enter a delivery location to place the order.";
+            return;
+        }
+        startSnippeCheckout(
+            items.map((item) => ({ name: item.name, quantity: item.quantity })),
+            location.trim(),
+            buyerStatus,
+            document.querySelector(".buyer-place-order"),
+        );
     });
 
     cropForm.addEventListener("submit", async (event) => {
