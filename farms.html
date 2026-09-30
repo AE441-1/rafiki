@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}My Farms | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<div class="container py-4 farm-workspace">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+            <span class="text-uppercase small fw-bold text-success">Farm workspace</span>
+            <h1 class="mt-2 mb-2">Your farms, all in one place</h1>
+            <p class="text-muted mb-0">Register every farm you manage and keep each location ready for monitoring and future assessments.</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-success">
+            <i class="fas fa-arrow-left me-2"></i>Back to dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-1">Add a farm</h2>
+                    <p class="text-muted small mb-4">You only enter a farm's information once. It will remain linked to your account after sign-in.</p>
+                    <form method="POST">
+                        <label class="form-label" for="farm_name">Farm name</label>
+                        <input class="form-control mb-3" id="farm_name" name="farm_name" placeholder="e.g. Kilosa Main Farm" required>
+
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label" for="region">Region</label>
+                                <input class="form-control" id="region" name="region" placeholder="Morogoro" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="district">District</label>
+                                <input class="form-control" id="district" name="district" placeholder="Kilosa" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="ward">Ward</label>
+                                <input class="form-control" id="ward" name="ward" placeholder="Magole" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-7">
+                                <label class="form-label" for="crop_type">Main crop</label>
+                                <input class="form-control" id="crop_type" name="crop_type" placeholder="Maize, rice, vegetables">
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label" for="farm_size">Size (acres)</label>
+                                <input class="form-control" id="farm_size" name="farm_size" type="number" min="0" step="0.01" placeholder="0">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success w-100 mt-4" type="submit">
+                            <i class="fas fa-plus me-2"></i>Save farm
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            {% if farms %}
+                <div class="row g-3">
+                    {% for farm in farms %}
+                    <div class="col-md-6">
+                        <article class="card border-0 shadow-sm h-100 farm-card">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between gap-2 mb-3">
+                                    <div class="farm-icon"><i class="fas fa-seedling"></i></div>
+                                    {% if farm.overall_score is not none %}
+                                        <span class="badge rounded-pill text-bg-success">{{ farm.overall_score }}% risk</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill text-bg-light">Not assessed</span>
+                                    {% endif %}
+                                </div>
+                                <h2 class="h5 mb-1">{{ farm.farm_name }}</h2>
+                                <p class="text-muted small mb-3"><i class="fas fa-location-dot me-1"></i>{{ farm.ward }}, {{ farm.district }}, {{ farm.region }}</p>
+                                <div class="farm-facts">
+                                    <span><strong>{{ farm.crop_type or 'Not set' }}</strong><small>Crop</small></span>
+                                    <span><strong>{{ farm.farm_size|default(0) }} ac</strong><small>Size</small></span>
+                                </div>
+                                <a href="{{ url_for('assessment') }}?farm_id={{ farm.id }}" class="btn btn-sm btn-outline-success mt-4 w-100">
+                                    <i class="fas fa-chart-line me-1"></i>Monitor farm
+                                </a>
+                            </div>
+                        </article>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state border rounded-4 p-5 text-center bg-light">
+                    <i class="fas fa-tractor fa-2x text-success mb-3"></i>
+                    <h2 class="h5">No farms registered yet</h2>
+                    <p class="text-muted mb-0">Add your first farm and it will appear here every time you sign in.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .farm-card { border-radius: 18px; transition: transform .2s ease, box-shadow .2s ease; }
+    .farm-card:hover { transform: translateY(-3px); box-shadow: 0 1rem 2rem rgba(15, 75, 65, .12) !important; }
+    .farm-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; color: #147d68; background: #e4f5ef; }
+    .farm-facts { display: flex; gap: 28px; border-top: 1px solid #e9efec; padding-top: 14px; }
+    .farm-facts span { display: grid; gap: 2px; }
+    .farm-facts strong { color: #17352e; font-size: 14px; }
+    .farm-facts small { color: #78857f; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+</style>
+{% endblock %}
