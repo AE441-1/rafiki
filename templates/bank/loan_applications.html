@@ -1,0 +1,353 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" style="max-width: 1250px; margin: 35px auto;">
+
+    <!-- Header -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    ">
+
+        <div>
+            <h2 style="margin: 0;">Loan Applications</h2>
+
+            <p style="color: #666; margin-top: 8px;">
+                Review and manage customer loan applications.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('bank_dashboard') }}"
+            style="
+                background: #343a40;
+                color: white;
+                padding: 10px 18px;
+                border-radius: 6px;
+                text-decoration: none;
+            "
+        >
+            ← Bank Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div style="
+                    padding: 12px 15px;
+                    margin-bottom: 15px;
+                    border-radius: 6px;
+                    background: #f1f1f1;
+                ">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- Applications Table -->
+    <div style="
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    ">
+
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        ">
+
+            <h3 style="margin: 0;">
+                Customer Applications
+            </h3>
+
+            <span style="
+                background: #e9ecef;
+                padding: 7px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+            ">
+                {{ applications|length }} Application(s)
+            </span>
+
+        </div>
+
+
+        {% if applications %}
+
+        <div style="overflow-x: auto;">
+
+            <table style="
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 950px;
+            ">
+
+                <thead>
+
+                    <tr style="background: #f8f9fa;">
+
+                        <th style="padding: 13px; text-align: left;">
+                            ID
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Customer
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Email
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Amount
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Purpose
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Duration
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Status
+                        </th>
+
+                        <th style="padding: 13px; text-align: left;">
+                            Date
+                        </th>
+
+                        <th style="padding: 13px; text-align: center;">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for application in applications %}
+
+                    <tr style="
+                        border-bottom: 1px solid #eee;
+                    ">
+
+                        <!-- ID -->
+                        <td style="padding: 13px;">
+                            #{{ application.id }}
+                        </td>
+
+
+                        <!-- Customer -->
+                        <td style="padding: 13px;">
+
+                            <strong>
+                                {{ application.customer_name }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Email -->
+                        <td style="padding: 13px;">
+                            {{ application.email }}
+                        </td>
+
+
+                        <!-- Amount -->
+                        <td style="padding: 13px; white-space: nowrap;">
+
+                            TZS
+                            {{ "{:,.2f}".format(application.amount) }}
+
+                        </td>
+
+
+                        <!-- Purpose -->
+                        <td style="padding: 13px;">
+
+                            {{ application.purpose }}
+
+                        </td>
+
+
+                        <!-- Duration -->
+                        <td style="padding: 13px;">
+
+                            {{ application.duration_months }}
+                            months
+
+                        </td>
+
+
+                        <!-- Status -->
+                        <td style="padding: 13px;">
+
+                            {% if application.status == "pending" %}
+
+                                <span style="
+                                    background: #fff3cd;
+                                    color: #856404;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 12px;
+                                    font-weight: bold;
+                                ">
+                                    Pending
+                                </span>
+
+
+                            {% elif application.status == "under_review" %}
+
+                                <span style="
+                                    background: #cff4fc;
+                                    color: #055160;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 12px;
+                                    font-weight: bold;
+                                ">
+                                    Under Review
+                                </span>
+
+
+                            {% elif application.status == "approved" %}
+
+                                <span style="
+                                    background: #d1e7dd;
+                                    color: #0f5132;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 12px;
+                                    font-weight: bold;
+                                ">
+                                    Approved
+                                </span>
+
+
+                            {% elif application.status == "rejected" %}
+
+                                <span style="
+                                    background: #f8d7da;
+                                    color: #842029;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 12px;
+                                    font-weight: bold;
+                                ">
+                                    Rejected
+                                </span>
+
+
+                            {% else %}
+
+                                <span>
+                                    {{ application.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Date -->
+                        <td style="padding: 13px; white-space: nowrap;">
+
+                            {{ application.application_date }}
+
+                        </td>
+
+
+                        <!-- Action -->
+                        <td style="
+                            padding: 13px;
+                            text-align: center;
+                        ">
+
+                            <a
+                                href="{{ url_for(
+                                    'review_loan',
+                                    application_id=application.id
+                                ) }}"
+                                style="
+                                    display: inline-block;
+                                    background: #0d6efd;
+                                    color: white;
+                                    padding: 8px 14px;
+                                    border-radius: 6px;
+                                    text-decoration: none;
+                                    font-size: 13px;
+                                "
+                            >
+                                Review
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <!-- Empty State -->
+
+        <div style="
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        ">
+
+            <div style="
+                font-size: 45px;
+                margin-bottom: 15px;
+            ">
+                📄
+            </div>
+
+            <h3>
+                No Loan Applications
+            </h3>
+
+            <p>
+                There are currently no customer loan applications
+                available for review.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

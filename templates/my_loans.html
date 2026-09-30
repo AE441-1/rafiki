@@ -1,0 +1,428 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" style="max-width: 1200px; margin: 40px auto;">
+
+    <!-- Page Header -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    ">
+
+        <div>
+            <h2 style="margin: 0;">My Loans</h2>
+
+            <p style="color: #666; margin-top: 8px;">
+                View your loan applications, approved loans and repayment status.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('loan_apply') }}"
+            style="
+                background: #198754;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+            "
+        >
+            + Apply for Loan
+        </a>
+
+    </div>
+
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div style="
+                    padding: 12px 15px;
+                    margin-bottom: 15px;
+                    border-radius: 6px;
+                    background: #f1f1f1;
+                ">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
+
+
+    <!-- Loan Applications -->
+    <div style="
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    ">
+
+        <h3 style="margin-top: 0;">
+            Loan Applications
+        </h3>
+
+        {% if applications %}
+
+        <div style="overflow-x: auto;">
+
+            <table style="
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            ">
+
+                <thead>
+
+                    <tr style="background: #f8f9fa;">
+
+                        <th style="padding: 12px; text-align: left;">
+                            Application ID
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Amount
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Purpose
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Duration
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Status
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Application Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for application in applications %}
+
+                    <tr style="border-bottom: 1px solid #eee;">
+
+                        <td style="padding: 12px;">
+                            #{{ application.id }}
+                        </td>
+
+                        <td style="padding: 12px;">
+                            TZS {{ "{:,.2f}".format(application.amount) }}
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ application.purpose }}
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ application.duration_months }} months
+                        </td>
+
+                        <td style="padding: 12px;">
+
+                            {% if application.status == "pending" %}
+
+                                <span style="
+                                    background: #fff3cd;
+                                    color: #856404;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Pending
+                                </span>
+
+                            {% elif application.status == "under_review" %}
+
+                                <span style="
+                                    background: #cff4fc;
+                                    color: #055160;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Under Review
+                                </span>
+
+                            {% elif application.status == "approved" %}
+
+                                <span style="
+                                    background: #d1e7dd;
+                                    color: #0f5132;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Approved
+                                </span>
+
+                            {% elif application.status == "rejected" %}
+
+                                <span style="
+                                    background: #f8d7da;
+                                    color: #842029;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Rejected
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    {{ application.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ application.application_date }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div style="
+                padding: 30px;
+                text-align: center;
+                color: #777;
+            ">
+
+                <h4>No Loan Applications</h4>
+
+                <p>
+                    You have not submitted any loan applications yet.
+                </p>
+
+                <a
+                    href="{{ url_for('loan_apply') }}"
+                    style="
+                        display: inline-block;
+                        margin-top: 10px;
+                        background: #198754;
+                        color: white;
+                        padding: 10px 18px;
+                        border-radius: 6px;
+                        text-decoration: none;
+                    "
+                >
+                    Apply for Your First Loan
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Approved / Active Loans -->
+    <div style="
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    ">
+
+        <h3 style="margin-top: 0;">
+            My Active Loans
+        </h3>
+
+        {% if loans %}
+
+        <div style="overflow-x: auto;">
+
+            <table style="
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            ">
+
+                <thead>
+
+                    <tr style="background: #f8f9fa;">
+
+                        <th style="padding: 12px; text-align: left;">
+                            Loan ID
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Amount
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Interest Rate
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Duration
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Bank
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Status
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Disbursement Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for loan in loans %}
+
+                    <tr style="border-bottom: 1px solid #eee;">
+
+                        <td style="padding: 12px;">
+                            #{{ loan.id }}
+                        </td>
+
+                        <td style="padding: 12px;">
+                            TZS {{ "{:,.2f}".format(loan.amount) }}
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ loan.interest_rate }}%
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ loan.duration_months }} months
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ loan.bank_name or "Not assigned" }}
+                        </td>
+
+                        <td style="padding: 12px;">
+
+                            {% if loan.status == "active" %}
+
+                                <span style="
+                                    background: #d1e7dd;
+                                    color: #0f5132;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Active
+                                </span>
+
+                            {% elif loan.status == "completed" %}
+
+                                <span style="
+                                    background: #cff4fc;
+                                    color: #055160;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Completed
+                                </span>
+
+                            {% elif loan.status == "defaulted" %}
+
+                                <span style="
+                                    background: #f8d7da;
+                                    color: #842029;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Defaulted
+                                </span>
+
+                            {% elif loan.status == "cancelled" %}
+
+                                <span style="
+                                    background: #e2e3e5;
+                                    color: #41464b;
+                                    padding: 6px 10px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                ">
+                                    Cancelled
+                                </span>
+
+                            {% else %}
+
+                                {{ loan.status }}
+
+                            {% endif %}
+
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ loan.disbursement_date or "Pending" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div style="
+                padding: 30px;
+                text-align: center;
+                color: #777;
+            ">
+
+                <h4>No Active Loans</h4>
+
+                <p>
+                    You currently have no disbursed loans.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+

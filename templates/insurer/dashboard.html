@@ -1,0 +1,1938 @@
+{% extends "base.html" %}
+
+{% block title %}Insurer Portal | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+
+<section class="insurer-dashboard">
+
+    <div class="container py-4">
+
+        <!-- =====================================================
+             INSURER HERO
+             ===================================================== -->
+
+        <div class="insurer-hero">
+
+            <div class="hero-content">
+
+                <div class="portal-label">
+                    <span class="live-dot"></span>
+                    INSURER PORTAL
+                </div>
+
+                <h1>
+                    Welcome, {{ session.get("name", "Insurer") }}
+                </h1>
+
+                <p>
+                    Manage insurance products, customer risks,
+                    policies, claims and climate-risk intelligence
+                    from one connected platform.
+                </p>
+
+            </div>
+
+            <div class="hero-actions">
+
+                <div class="platform-status">
+                    <span class="status-dot"></span>
+                    PLATFORM ONLINE
+                </div>
+
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="logout-btn"
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STATISTICS
+             ===================================================== -->
+
+        <div class="row g-4 mb-5">
+
+            <!-- TOTAL CUSTOMERS -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>TOTAL CUSTOMERS</span>
+
+                        <h2>
+                            {{ total_customers|default(0) }}
+                        </h2>
+
+                        <p>
+                            Customers registered on the platform
+                        </p>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HIGH RISK -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card warning-card">
+
+                    <div class="stat-content">
+
+                        <span>HIGH RISK CUSTOMERS</span>
+
+                        <h2>
+                            {{ high_risk|default(0) }}
+                        </h2>
+
+                        <p>
+                            Customers with high risk scores
+                        </p>
+
+                    </div>
+
+                    <div class="stat-icon warning-icon">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RISK PROFILES -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>RISK PROFILES</span>
+
+                        <h2>
+                            {{ profiles|default(0) }}
+                        </h2>
+
+                        <p>
+                            Customer risk profiles available
+                        </p>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVE POLICIES -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>ACTIVE POLICIES</span>
+
+                        <h2>
+                            {{ active_policies|default(0) }}
+                        </h2>
+
+                        <p>
+                            Currently active insurance policies
+                        </p>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             INSURANCE MANAGEMENT
+             ===================================================== -->
+
+        <div class="section-heading">
+
+            <div>
+
+                <span>
+                    INSURANCE MANAGEMENT
+                </span>
+
+                <h2>
+                    Protection Services
+                </h2>
+
+            </div>
+
+            <p>
+                Manage products, customers, policies and claims.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4 mb-5">
+
+
+            <!-- PRODUCT MANAGEMENT -->
+            <div class="col-xl-4 col-md-6">
+
+                <div class="service-card">
+
+                    <div class="service-top">
+
+                        <div class="service-icon">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+
+                        <span>01</span>
+
+                    </div>
+
+                    <small>
+                        PRODUCT MANAGEMENT
+                    </small>
+
+                    <h3>
+                        Insurance Products
+                    </h3>
+
+                    <p>
+                        Manage insurance products, coverage,
+                        premiums and policy duration.
+                    </p>
+
+                    <a href="{{ url_for('insurer_products') }}" class="service-button">
+                        Manage Products
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMER RISK -->
+            <div class="col-xl-4 col-md-6">
+
+                <div class="service-card">
+
+                    <div class="service-top">
+
+                        <div class="service-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+
+                        <span>02</span>
+
+                    </div>
+
+                    <small>
+                        RISK INTELLIGENCE
+                    </small>
+
+                    <h3>
+                        Customer Risk Profiles
+                    </h3>
+
+                    <p>
+                        Review customer risk information and
+                        climate-related exposure.
+                    </p>
+
+                    <a href="{{ url_for('insurer_risk_profiles') }}" class="service-button">
+                        View Risk Profiles
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLAIMS -->
+            <div class="col-xl-4 col-md-6">
+
+                <div class="service-card">
+
+                    <div class="service-top">
+
+                        <div class="service-icon">
+                            <i class="fa-solid fa-file-circle-check"></i>
+                        </div>
+
+                        <span>03</span>
+
+                    </div>
+
+                    <small>
+                        CLAIMS
+                    </small>
+
+                    <h3>
+                        Claims Management
+                    </h3>
+
+                    <p>
+                        Review, process and manage customer
+                        insurance claims.
+                    </p>
+
+                    <a href="{{ url_for('insurer_claims') }}" class="service-button">
+                        Manage Claims
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- POLICIES -->
+            <div class="col-xl-4 col-md-6">
+
+                <div class="service-card">
+
+                    <div class="service-top">
+
+                        <div class="service-icon">
+                            <i class="fa-solid fa-shield"></i>
+                        </div>
+
+                        <span>04</span>
+
+                    </div>
+
+                    <small>
+                        POLICY MANAGEMENT
+                    </small>
+
+                    <h3>
+                        Customer Policies
+                    </h3>
+
+                    <p>
+                        Monitor active and expired customer
+                        insurance policies and review new applications.
+                    </p>
+
+                    <span class="badge bg-warning text-dark mb-3">
+                        {{ pending_policy_applications|default(0) }} pending application(s)
+                    </span>
+
+                    <a
+                        href="{{ url_for('insurer_policy_applications') }}"
+                        class="service-button"
+                    >
+                        Review Applications
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- PREMIUMS -->
+            <div class="col-xl-4 col-md-6">
+
+                <div class="service-card">
+
+                    <div class="service-top">
+
+                        <div class="service-icon">
+                            <i class="fa-solid fa-money-bill-trend-up"></i>
+                        </div>
+
+                        <span>05</span>
+
+                    </div>
+
+                    <small>
+                        PREMIUMS
+                    </small>
+
+                    <h3>
+                        Premium Management
+                    </h3>
+
+                    <p>
+                        Set product premiums and review
+                        estimated value of active cover.
+                    </p>
+
+                    <a href="{{ url_for('insurer_premiums') }}" class="service-button">
+                        View Premiums
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- REPORTS -->
+            <div class="col-xl-4 col-md-6">
+
+                <div class="service-card">
+
+                    <div class="service-top">
+
+                        <div class="service-icon">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+
+                        <span>06</span>
+
+                    </div>
+
+                    <small>
+                        ANALYTICS
+                    </small>
+
+                    <h3>
+                        Insurance Reports
+                    </h3>
+
+                    <p>
+                        View reports about customers, policies,
+                        claims and risk.
+                    </p>
+
+                    <a href="{{ url_for('insurer_reports') }}" class="service-button">
+                        View Reports
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             RISK INTELLIGENCE
+             ===================================================== -->
+
+        <div class="ai-section">
+
+            <div class="ai-header">
+
+                <div class="ai-title">
+
+                    <div class="ai-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            RISK INTELLIGENCE
+                        </span>
+
+                        <h2>
+                            Climate Risk Analysis
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <div class="ai-status">
+
+                    <span></span>
+
+                    RISK TOOLS ACTIVE
+
+                </div>
+
+            </div>
+
+
+            <p class="ai-description">
+
+                Use customer risk information to support insurance
+                assessment, risk analysis and insurance product
+                recommendations.
+
+            </p>
+
+
+            <div class="row g-4">
+
+
+                <!-- DROUGHT -->
+                <div class="col-lg-4">
+
+                    <div class="risk-card">
+
+                        <div class="risk-icon">
+                            <i class="fa-solid fa-sun"></i>
+                        </div>
+
+                        <div>
+
+                            <small>
+                                CLIMATE INDICATOR
+                            </small>
+
+                            <h3>
+                                Drought Risk
+                            </h3>
+
+                            <p>
+                                Identifies customer exposure to
+                                drought-related risks, particularly
+                                for agricultural customers.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FLOOD -->
+                <div class="col-lg-4">
+
+                    <div class="risk-card">
+
+                        <div class="risk-icon">
+                            <i class="fa-solid fa-water"></i>
+                        </div>
+
+                        <div>
+
+                            <small>
+                                CLIMATE INDICATOR
+                            </small>
+
+                            <h3>
+                                Flood Risk
+                            </h3>
+
+                            <p>
+                                Identifies customer exposure to
+                                flood-related risks.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RAINFALL -->
+                <div class="col-lg-4">
+
+                    <div class="risk-card">
+
+                        <div class="risk-icon">
+                            <i class="fa-solid fa-cloud-rain"></i>
+                        </div>
+
+                        <div>
+
+                            <small>
+                                CLIMATE INDICATOR
+                            </small>
+
+                            <h3>
+                                Rainfall Risk
+                            </h3>
+
+                            <p>
+                                Identifies exposure to excessive
+                                rainfall conditions.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PEST PRESSURE -->
+                <div class="col-lg-4">
+
+                    <div class="risk-card">
+
+                        <div class="risk-icon">
+                            <i class="fa-solid fa-bug"></i>
+                        </div>
+
+                        <div>
+
+                            <small>
+                                CLIMATE INDICATOR
+                            </small>
+
+                            <h3>
+                                Pest Pressure
+                            </h3>
+
+                            <p>
+                                Highlights possible crop pest and
+                                disease conditions linked to warm,
+                                wet and heavy-rain periods.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI NOTICE -->
+
+            <div class="ai-notice">
+
+                <div class="notice-icon">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Decision Support
+                    </strong>
+
+                    <p>
+                        Risk information supports
+                        insurance assessment and product
+                        recommendations. Final insurance decisions
+                        remain subject to insurer assessment and
+                        applicable requirements.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             RECENT ACTIVITY
+             ===================================================== -->
+
+        <div class="section-heading activity-heading">
+
+            <div>
+
+                <span>
+                    PLATFORM ACTIVITY
+                </span>
+
+                <h2>
+                    Recent Activity
+                </h2>
+
+            </div>
+
+            <div class="activity-live">
+
+                <span></span>
+
+                LIVE
+
+            </div>
+
+        </div>
+
+
+        <div class="activity-panel">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                ACTIVITY
+                            </th>
+
+                            <th>
+                                CUSTOMER
+                            </th>
+
+                            <th>
+                                STATUS
+                            </th>
+
+                            <th>
+                                DATE
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+                        {% for activity in recent_activity %}
+                            <tr>
+                                <td>
+                                    <span class="activity-type">
+                                        {% if activity.activity_type == 'Policy application' %}
+                                            <i class="fa-solid fa-file-shield"></i>
+                                        {% elif activity.activity_type == 'Insurance claim' %}
+                                            <i class="fa-solid fa-file-circle-check"></i>
+                                        {% else %}
+                                            <i class="fa-solid fa-chart-line"></i>
+                                        {% endif %}
+                                        {{ activity.activity_type }}
+                                    </span>
+                                    <small class="activity-detail">{{ activity.detail }}</small>
+                                </td>
+                                <td>{{ activity.customer_name }}</td>
+                                <td><span class="activity-status">{{ activity.status|replace('_', ' ')|capitalize }}</span></td>
+                                <td>{{ activity.activity_date }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+                                        <strong>No recent activity</strong>
+                                        <span>Policy applications, claims, and risk assessments will appear here.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+<!-- =========================================================
+     PAGE CSS
+     ========================================================= -->
+
+{% block extra_css %}
+
+<style>
+
+/* =========================================================
+   GLOBAL INSURER DASHBOARD
+   ========================================================= */
+
+.insurer-dashboard {
+    min-height: 100vh;
+
+    padding: 30px 0 70px;
+
+    color: #e8f4f1;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(22,160,133,.07),
+            transparent 30%
+        );
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.insurer-hero {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 35px;
+
+    margin-bottom: 30px;
+
+    border:
+        1px solid rgba(22,160,133,.18);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(11,42,40,.97),
+            rgba(5,21,21,.97)
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.28);
+}
+
+
+.portal-label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 13px;
+
+    color: #35d39a;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+}
+
+
+.live-dot,
+.status-dot,
+.ai-status span,
+.activity-live span {
+
+    width: 7px;
+
+    height: 7px;
+
+    display: inline-block;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #35d39a;
+
+    box-shadow:
+        0 0 10px rgba(53,211,154,.7);
+}
+
+
+.insurer-hero h1 {
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: clamp(28px,4vw,40px);
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+
+.insurer-hero p {
+
+    max-width: 700px;
+
+    margin: 0;
+
+    color: #91aaa5;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO ACTIONS
+   ========================================================= */
+
+.hero-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+
+.platform-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #91aaa5;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.logout-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    border:
+        1px solid rgba(239,107,115,.25);
+
+    border-radius: 10px;
+
+    color: #ef8b91;
+
+    background:
+        rgba(239,107,115,.06);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    transition: .2s ease;
+}
+
+
+.logout-btn:hover {
+
+    color: white;
+
+    background:
+        rgba(239,107,115,.13);
+
+    border-color:
+        rgba(239,107,115,.4);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.stat-card {
+
+    position: relative;
+
+    height: 100%;
+
+    min-height: 175px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 24px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,34,34,.96),
+            rgba(6,21,21,.96)
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.22);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+
+.stat-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(22,160,133,.30);
+}
+
+
+.stat-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 3px;
+
+    height: 100%;
+
+    background: #16a085;
+}
+
+
+.warning-card::before {
+
+    background: #e5ad46;
+}
+
+
+.stat-content span {
+
+    display: block;
+
+    margin-bottom: 14px;
+
+    color: #819a96;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+}
+
+
+.stat-content h2 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 32px;
+
+    font-weight: 800;
+}
+
+
+.stat-content p {
+
+    margin: 18px 0 0;
+
+    color: #829a96;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+.stat-icon {
+
+    width: 44px;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    color: #32d39b;
+
+    background:
+        rgba(22,160,133,.10);
+
+    border:
+        1px solid rgba(22,160,133,.15);
+}
+
+
+.warning-icon {
+
+    color: #e8b04c;
+
+    background:
+        rgba(232,176,76,.08);
+
+    border-color:
+        rgba(232,176,76,.15);
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.section-heading {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin: 10px 0 25px;
+}
+
+
+.section-heading > div > span {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #27c995;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.7px;
+}
+
+
+.section-heading h2 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 25px;
+
+    font-weight: 800;
+}
+
+
+.section-heading > p {
+
+    margin: 0;
+
+    color: #849b97;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   SERVICE CARDS
+   ========================================================= */
+
+.service-card {
+
+    height: 100%;
+
+    min-height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 25px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,34,34,.95),
+            rgba(6,21,21,.95)
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.20);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+
+.service-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(22,160,133,.28);
+}
+
+
+.service-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+}
+
+
+.service-top > span {
+
+    color: #506c67;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.service-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    color: #2ed39a;
+
+    background:
+        rgba(22,160,133,.09);
+
+    border:
+        1px solid rgba(22,160,133,.15);
+
+    font-size: 18px;
+}
+
+
+.service-card small {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #28c994;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+}
+
+
+.service-card h3 {
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    font-weight: 750;
+}
+
+
+.service-card p {
+
+    margin: 0 0 24px;
+
+    color: #8ba29e;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.service-button {
+
+    width: fit-content;
+
+    margin-top: auto;
+
+    padding: 10px 14px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    border:
+        1px solid rgba(22,160,133,.18);
+
+    border-radius: 9px;
+
+    color: #2fd19a;
+
+    background:
+        rgba(22,160,133,.06);
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+
+.service-button:disabled {
+
+    opacity: 1;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+    RISK SECTION
+   ========================================================= */
+
+.ai-section {
+
+    margin: 60px 0;
+
+    padding: 32px;
+
+    border:
+        1px solid rgba(22,160,133,.17);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9,35,33,.96),
+            rgba(5,20,20,.96)
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.25);
+}
+
+
+.ai-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.ai-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 17px;
+}
+
+
+.ai-icon {
+
+    width: 54px;
+
+    height: 54px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a085,
+            #0f766e
+        );
+
+    box-shadow:
+        0 10px 25px rgba(22,160,133,.20);
+}
+
+
+.ai-title span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #29ce98;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.ai-title h2 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+
+.ai-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    color: #37d69a;
+
+    background:
+        rgba(53,211,154,.07);
+
+    border:
+        1px solid rgba(53,211,154,.13);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.ai-description {
+
+    max-width: 750px;
+
+    margin: 18px 0 25px;
+
+    color: #8da5a1;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   RISK CARDS
+   ========================================================= */
+
+.risk-card {
+
+    height: 100%;
+
+    display: flex;
+
+    gap: 16px;
+
+    padding: 22px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.025);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+
+.risk-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(22,160,133,.22);
+}
+
+
+.risk-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    color: #2dd19a;
+
+    background:
+        rgba(22,160,133,.08);
+}
+
+
+.risk-card small {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #66827d;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+}
+
+
+.risk-card h3 {
+
+    margin: 0 0 8px;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+
+.risk-card p {
+
+    margin: 0;
+
+    color: #839b97;
+
+    font-size: 11px;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   AI NOTICE
+   ========================================================= */
+
+.ai-notice {
+
+    display: flex;
+
+    gap: 14px;
+
+    margin-top: 24px;
+
+    padding: 17px;
+
+    border:
+        1px solid rgba(22,160,133,.14);
+
+    border-radius: 13px;
+
+    background:
+        rgba(22,160,133,.05);
+}
+
+
+.notice-icon {
+
+    color: #2dd19a;
+
+    font-size: 16px;
+}
+
+
+.ai-notice strong {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #dce8e5;
+
+    font-size: 12px;
+}
+
+
+.ai-notice p {
+
+    margin: 0;
+
+    color: #839a96;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ACTIVITY
+   ========================================================= */
+
+.activity-heading {
+
+    margin-top: 10px;
+}
+
+
+.activity-live {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #35d39a;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.activity-panel {
+
+    overflow: hidden;
+
+    margin-bottom: 40px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 17px;
+
+    background:
+        rgba(7,23,23,.94);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.18);
+}
+
+
+.activity-panel table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+.activity-panel th {
+
+    padding: 15px 20px;
+
+    color: #718b86;
+
+    background:
+        rgba(255,255,255,.025);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+    text-align: left;
+}
+
+.activity-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.activity-type i {
+    color: #56c8aa;
+    width: 16px;
+    text-align: center;
+}
+
+.activity-detail {
+    display: block;
+    color: #8da39d;
+    margin-top: 4px;
+}
+
+.activity-status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(86, 200, 170, .13);
+    color: #56c8aa;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.empty-state {
+
+    min-height: 180px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    text-align: center;
+}
+
+
+.empty-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 8px;
+
+    border-radius: 50%;
+
+    color: #2dd19a;
+
+    background:
+        rgba(22,160,133,.08);
+
+    border:
+        1px solid rgba(22,160,133,.12);
+}
+
+
+.empty-state strong {
+
+    color: #dce8e5;
+
+    font-size: 13px;
+}
+
+
+.empty-state span {
+
+    color: #718a85;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   BOOTSTRAP OVERRIDES
+   Prevent white Bootstrap elements from appearing
+   ========================================================= */
+
+.insurer-dashboard .text-muted {
+
+    color: #839b97 !important;
+}
+
+
+.insurer-dashboard .card {
+
+    color: #e8f4f1;
+
+    background:
+        #121c1b;
+
+    border-color:
+        rgba(255,255,255,.08);
+}
+
+
+.insurer-dashboard a {
+
+    transition: .2s ease;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .insurer-hero {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .hero-actions {
+
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+    .ai-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .insurer-dashboard {
+
+        padding-top: 20px;
+    }
+
+    .insurer-hero {
+
+        padding: 24px;
+
+        border-radius: 17px;
+    }
+
+    .insurer-hero h1 {
+
+        font-size: 28px;
+    }
+
+    .hero-actions {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .ai-section {
+
+        padding: 22px;
+
+        border-radius: 17px;
+    }
+
+    .ai-title h2 {
+
+        font-size: 19px;
+    }
+
+    .ai-status {
+
+        align-self: flex-start;
+    }
+
+    .section-heading {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .stat-card {
+
+        min-height: 155px;
+    }
+
+    .service-card {
+
+        min-height: 280px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Risk Profiles | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <span>RISK INTELLIGENCE</span>
+                <h1>Customer risk profiles</h1>
+                <p>Review the latest available customer profile and climate-risk assessment.</p>
+            </div>
+            <a href="{{ url_for('insurer_dashboard') }}" class="btn btn-outline-primary">Back to dashboard</a>
+        </div>
+
+        <div class="metric-card mb-4">
+            <span>CUSTOMER PROFILES</span>
+            <strong>{{ customers|length }}</strong>
+        </div>
+
+        {% if customers %}
+        <div class="dashboard-panel">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Location</th>
+                            <th>Profile</th>
+                            <th>Overall</th>
+                            <th>Drought</th>
+                            <th>Flood</th>
+                            <th>Rainfall</th>
+                            <th>Pest pressure</th>
+                            <th>Assessment date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>
+                                <strong>{{ customer.name }}</strong>
+                                <small class="d-block text-muted">{{ customer.email }}</small>
+                                {% if customer.phone %}<small class="text-muted">{{ customer.phone }}</small>{% endif %}
+                            </td>
+                            <td>{{ customer.location or "Not provided" }}</td>
+                            <td>
+                                {{ customer.customer_type or "Not provided" }}
+                                {% if customer.crop_type %}<small class="d-block text-muted">{{ customer.crop_type }}</small>{% elif customer.business_type %}<small class="d-block text-muted">{{ customer.business_type }}</small>{% endif %}
+                            </td>
+                            <td>
+                                {% if customer.overall_score is not none %}
+                                    <strong>{{ "%.1f"|format(customer.overall_score|float) }}%</strong>
+                                {% else %}<span class="text-muted">No assessment</span>{% endif %}
+                            </td>
+                            <td>{{ "%.1f%%"|format(customer.drought_score|float) if customer.drought_score is not none else "—" }}</td>
+                            <td>{{ "%.1f%%"|format(customer.flood_score|float) if customer.flood_score is not none else "—" }}</td>
+                            <td>{{ "%.1f%%"|format(customer.rainfall_score|float) if customer.rainfall_score is not none else "—" }}</td>
+                            <td>{{ "%.1f%%"|format(customer.pest_pressure_score|float) if customer.pest_pressure_score is not none else "—" }}</td>
+                            <td>{{ customer.assessment_date or "—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state"><h2>No customer profiles yet</h2><p>Profiles will appear when customers complete risk assessments.</p></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

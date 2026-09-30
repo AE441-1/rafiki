@@ -1,0 +1,1587 @@
+{% extends "base.html" %}
+
+{% block title %}Customers | Bank Portal{% endblock %}
+
+{% block content %}
+
+<section class="bank-customers-page">
+
+    <div class="container customers-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <div class="customers-hero">
+
+            <div class="hero-left">
+
+                <div class="portal-label">
+                    <span class="live-dot"></span>
+                    CUSTOMER MANAGEMENT
+                </div>
+
+                <h1>
+                    Customers
+                </h1>
+
+                <p>
+                    View registered customers and their available
+                    risk information from the Rafiki Mkombozi platform.
+                </p>
+
+            </div>
+
+
+            <div class="hero-actions">
+
+                <div class="customer-count">
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>
+                        {{ customers|length }}
+                        Customer(s)
+                    </span>
+                </div>
+
+                <a
+                    href="{{ url_for('bank_dashboard') }}"
+                    class="dashboard-btn"
+                >
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Bank Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CUSTOMER SUMMARY
+             ===================================================== -->
+
+        <div class="row g-4 mb-5">
+
+
+            <!-- TOTAL CUSTOMERS -->
+
+            <div class="col-xl-4 col-md-6">
+
+                <div class="summary-card">
+
+                    <div class="summary-content">
+
+                        <span>
+                            TOTAL CUSTOMERS
+                        </span>
+
+                        <h2>
+                            {{ customers|length }}
+                        </h2>
+
+                        <p>
+                            Customers registered on the platform
+                        </p>
+
+                    </div>
+
+                    <div class="summary-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMERS WITH RISK DATA -->
+
+            <div class="col-xl-4 col-md-6">
+
+                <div class="summary-card risk-summary">
+
+                    <div class="summary-content">
+
+                        <span>
+                            CUSTOMERS WITH RISK DATA
+                        </span>
+
+                        <h2>
+                            {{ customers|selectattr('overall_risk')|list|length }}
+                        </h2>
+
+                        <p>
+                            Customers with available risk assessments
+                        </p>
+
+                    </div>
+
+                    <div class="summary-icon risk-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMER RECORDS -->
+
+            <div class="col-xl-4 col-md-6">
+
+                <div class="summary-card">
+
+                    <div class="summary-content">
+
+                        <span>
+                            CUSTOMER RECORDS
+                        </span>
+
+                        <h2>
+                            {{ customers|length }}
+                        </h2>
+
+                        <p>
+                            Customer records currently available
+                        </p>
+
+                    </div>
+
+                    <div class="summary-icon">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CUSTOMER TABLE
+             ===================================================== -->
+
+        <div class="customers-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-label">
+                        CUSTOMER DIRECTORY
+                    </span>
+
+                    <h2>
+                        Registered Customers
+                    </h2>
+
+                    <p>
+                        Review customer profiles and risk information.
+                    </p>
+
+                </div>
+
+
+                <div class="record-badge">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    {{ customers|length }}
+                    Customer(s)
+
+                </div>
+
+            </div>
+
+
+            {% if customers %}
+
+            <div class="table-wrapper">
+
+                <table class="customers-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                CUSTOMER
+                            </th>
+
+                            <th>
+                                EMAIL
+                            </th>
+
+                            <th>
+                                LOCATION
+                            </th>
+
+                            <th>
+                                CUSTOMER TYPE
+                            </th>
+
+                            <th>
+                                BUSINESS / CROP
+                            </th>
+
+                            <th class="center">
+                                OVERALL RISK
+                            </th>
+
+                            <th class="center">
+                                RISK LEVEL
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for customer in customers %}
+
+                        <tr>
+
+                            <!-- ID -->
+
+                            <td>
+
+                                <span class="customer-id">
+                                    #{{ customer.id }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- CUSTOMER -->
+
+                            <td>
+
+                                <div class="customer-name">
+
+                                    <div class="customer-avatar">
+
+                                        {% if customer.name %}
+
+                                            {{ customer.name[0]|upper }}
+
+                                        {% else %}
+
+                                            U
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ customer.name }}
+                                        </strong>
+
+                                        <small>
+                                            Customer
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- EMAIL -->
+
+                            <td>
+
+                                <span class="email-text">
+                                    {{ customer.email }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- LOCATION -->
+
+                            <td>
+
+                                <span class="table-value">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    {{ customer.location or "Not provided" }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- CUSTOMER TYPE -->
+
+                            <td>
+
+                                <span class="type-badge">
+
+                                    {{ customer.customer_type or "Not provided" }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- CROP / BUSINESS -->
+
+                            <td>
+
+                                <span class="table-value">
+
+                                    {% if customer.crop_type %}
+
+                                        <i class="fa-solid fa-seedling"></i>
+
+                                        {{ customer.crop_type }}
+
+                                    {% elif customer.business_type %}
+
+                                        <i class="fa-solid fa-briefcase"></i>
+
+                                        {{ customer.business_type }}
+
+                                    {% else %}
+
+                                        Not provided
+
+                                    {% endif %}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- OVERALL RISK -->
+
+                            <td class="center">
+
+                                {% if customer.overall_risk is not none %}
+
+                                    <div class="risk-score">
+
+                                        {{ customer.overall_risk }}%
+
+                                    </div>
+
+                                {% else %}
+
+                                    <span class="risk-na">
+                                        N/A
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- RISK LEVEL -->
+
+                            <td class="center">
+
+                                {% if customer.overall_risk is none %}
+
+                                    <span class="risk-badge no-data">
+                                        <span></span>
+                                        No Data
+                                    </span>
+
+
+                                {% elif customer.overall_risk >= 70 %}
+
+                                    <span class="risk-badge high">
+                                        <span></span>
+                                        High
+                                    </span>
+
+
+                                {% elif customer.overall_risk >= 40 %}
+
+                                    <span class="risk-badge medium">
+                                        <span></span>
+                                        Medium
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="risk-badge low">
+                                        <span></span>
+                                        Low
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+            <!-- =================================================
+                 EMPTY STATE
+                 ================================================= -->
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </div>
+
+                <h3>
+                    No Customers Found
+                </h3>
+
+                <p>
+                    There are currently no registered customers
+                    on the platform.
+                </p>
+
+                <a
+                    href="{{ url_for('bank_dashboard') }}"
+                    class="empty-button"
+                >
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+<!-- =========================================================
+     PAGE CSS
+     ========================================================= -->
+
+{% block extra_css %}
+
+<style>
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+.bank-customers-page {
+
+    min-height: 100vh;
+
+    padding: 30px 0 70px;
+
+    color: #e8f4f1;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(22,160,133,.06),
+            transparent 32%
+        );
+}
+
+
+.customers-container {
+
+    max-width: 1250px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.customers-hero {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 32px;
+
+    margin-bottom: 30px;
+
+    border:
+        1px solid rgba(22,160,133,.18);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(11,42,40,.97),
+            rgba(5,21,21,.97)
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.28);
+}
+
+
+.portal-label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+    color: #35d39a;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+}
+
+
+.live-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+
+    background: #35d39a;
+
+    box-shadow:
+        0 0 10px rgba(53,211,154,.7);
+}
+
+
+.customers-hero h1 {
+
+    margin: 0 0 9px;
+
+    color: #ffffff;
+
+    font-size: clamp(28px,4vw,38px);
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+
+.customers-hero p {
+
+    max-width: 700px;
+
+    margin: 0;
+
+    color: #91aaa5;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO ACTIONS
+   ========================================================= */
+
+.hero-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+.customer-count {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 13px;
+
+    border:
+        1px solid rgba(22,160,133,.14);
+
+    border-radius: 10px;
+
+    color: #83a09a;
+
+    background:
+        rgba(22,160,133,.05);
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+.customer-count i {
+
+    color: #2ed39a;
+}
+
+
+.dashboard-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    border:
+        1px solid rgba(22,160,133,.22);
+
+    border-radius: 10px;
+
+    color: #35d39a;
+
+    background:
+        rgba(22,160,133,.07);
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    transition: .2s ease;
+}
+
+
+.dashboard-btn:hover {
+
+    color: white;
+
+    background:
+        rgba(22,160,133,.15);
+
+    border-color:
+        rgba(22,160,133,.4);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.summary-card {
+
+    position: relative;
+
+    height: 100%;
+
+    min-height: 165px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 23px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,34,34,.96),
+            rgba(6,21,21,.96)
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.22);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+
+.summary-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(22,160,133,.3);
+}
+
+
+.summary-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 3px;
+
+    height: 100%;
+
+    background: #16a085;
+}
+
+
+.risk-summary::before {
+
+    background: #e5ad46;
+}
+
+
+.summary-content span {
+
+    display: block;
+
+    margin-bottom: 13px;
+
+    color: #819a96;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+}
+
+
+.summary-content h2 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 31px;
+
+    font-weight: 800;
+}
+
+
+.summary-content p {
+
+    margin: 16px 0 0;
+
+    color: #829a96;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+.summary-icon {
+
+    width: 44px;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    color: #32d39b;
+
+    background:
+        rgba(22,160,133,.10);
+
+    border:
+        1px solid rgba(22,160,133,.15);
+}
+
+
+.risk-icon {
+
+    color: #e8b04c;
+
+    background:
+        rgba(232,176,76,.08);
+
+    border-color:
+        rgba(232,176,76,.15);
+}
+
+
+/* =========================================================
+   CUSTOMER PANEL
+   ========================================================= */
+
+.customers-panel {
+
+    overflow: hidden;
+
+    margin-top: 5px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,34,34,.96),
+            rgba(6,21,21,.96)
+        );
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.22);
+}
+
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.panel-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 25px 27px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+}
+
+
+.section-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #27c995;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.7px;
+}
+
+
+.panel-header h2 {
+
+    margin: 0 0 6px;
+
+    color: #ffffff;
+
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+
+.panel-header p {
+
+    margin: 0;
+
+    color: #819a96;
+
+    font-size: 11px;
+}
+
+
+.record-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 13px;
+
+    border:
+        1px solid rgba(22,160,133,.16);
+
+    border-radius: 20px;
+
+    color: #7e9a94;
+
+    background:
+        rgba(22,160,133,.06);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.record-badge i {
+
+    color: #2dd19a;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.customers-table {
+
+    width: 100%;
+
+    min-width: 1100px;
+
+    border-collapse: collapse;
+
+    color: #dce8e5;
+}
+
+
+.customers-table thead {
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+
+.customers-table th {
+
+    padding: 15px 18px;
+
+    color: #718b86;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.15px;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+.customers-table th.center {
+
+    text-align: center;
+}
+
+
+.customers-table td {
+
+    padding: 17px 18px;
+
+    color: #b9cbc7;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.055);
+
+    font-size: 11px;
+
+    vertical-align: middle;
+}
+
+
+.customers-table tbody tr {
+
+    transition:
+        background .2s ease;
+}
+
+
+.customers-table tbody tr:hover {
+
+    background:
+        rgba(22,160,133,.045);
+}
+
+
+.customers-table tbody tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+.customers-table td.center {
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   CUSTOMER ID
+   ========================================================= */
+
+.customer-id {
+
+    color: #6e8983;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CUSTOMER NAME
+   ========================================================= */
+
+.customer-name {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.customer-avatar {
+
+    width: 37px;
+
+    height: 37px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    color: #31d39a;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(22,160,133,.17),
+            rgba(22,160,133,.05)
+        );
+
+    border:
+        1px solid rgba(22,160,133,.16);
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.customer-name strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+.customer-name small {
+
+    display: block;
+
+    color: #627c77;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   EMAIL
+   ========================================================= */
+
+.email-text {
+
+    color: #91aaa5;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   TABLE VALUES
+   ========================================================= */
+
+.table-value {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #9db2ae;
+
+    font-size: 10px;
+}
+
+
+.table-value i {
+
+    color: #2acb96;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   CUSTOMER TYPE
+   ========================================================= */
+
+.type-badge {
+
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 7px;
+
+    color: #a4b9b5;
+
+    background:
+        rgba(255,255,255,.035);
+
+    font-size: 9px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   RISK SCORE
+   ========================================================= */
+
+.risk-score {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 58px;
+
+    padding: 7px 9px;
+
+    border-radius: 8px;
+
+    color: #35d39a;
+
+    background:
+        rgba(22,160,133,.08);
+
+    border:
+        1px solid rgba(22,160,133,.13);
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.risk-na {
+
+    color: #627c77;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   RISK BADGES
+   ========================================================= */
+
+.risk-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+
+    font-weight: 800;
+}
+
+
+.risk-badge span {
+
+    width: 6px;
+
+    height: 6px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+}
+
+
+/* HIGH */
+
+.risk-badge.high {
+
+    color: #f08b92;
+
+    background:
+        rgba(239,107,115,.08);
+
+    border:
+        1px solid rgba(239,107,115,.15);
+}
+
+
+.risk-badge.high span {
+
+    background: #ef6b73;
+
+    box-shadow:
+        0 0 7px rgba(239,107,115,.55);
+}
+
+
+/* MEDIUM */
+
+.risk-badge.medium {
+
+    color: #e8b04c;
+
+    background:
+        rgba(232,176,76,.08);
+
+    border:
+        1px solid rgba(232,176,76,.15);
+}
+
+
+.risk-badge.medium span {
+
+    background: #e5ad46;
+
+    box-shadow:
+        0 0 7px rgba(229,173,70,.45);
+}
+
+
+/* LOW */
+
+.risk-badge.low {
+
+    color: #35d39a;
+
+    background:
+        rgba(53,211,154,.07);
+
+    border:
+        1px solid rgba(53,211,154,.13);
+}
+
+
+.risk-badge.low span {
+
+    background: #35d39a;
+
+    box-shadow:
+        0 0 7px rgba(53,211,154,.5);
+}
+
+
+/* NO DATA */
+
+.risk-badge.no-data {
+
+    color: #879b97;
+
+    background:
+        rgba(255,255,255,.04);
+
+    border:
+        1px solid rgba(255,255,255,.07);
+}
+
+
+.risk-badge.no-data span {
+
+    background: #667b77;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+
+    min-height: 350px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    padding: 50px 20px;
+
+    text-align: center;
+}
+
+
+.empty-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 17px;
+
+    border-radius: 18px;
+
+    color: #2dd19a;
+
+    background:
+        rgba(22,160,133,.08);
+
+    border:
+        1px solid rgba(22,160,133,.14);
+
+    font-size: 25px;
+}
+
+
+.empty-state h3 {
+
+    margin: 0 0 7px;
+
+    color: #dce8e5;
+
+    font-size: 17px;
+
+    font-weight: 800;
+}
+
+
+.empty-state p {
+
+    margin: 0 0 20px;
+
+    color: #718a85;
+
+    font-size: 11px;
+}
+
+
+.empty-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border:
+        1px solid rgba(22,160,133,.18);
+
+    border-radius: 9px;
+
+    color: #2fd19a;
+
+    background:
+        rgba(22,160,133,.06);
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .customers-hero {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .hero-actions {
+
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+
+    .panel-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .bank-customers-page {
+
+        padding-top: 20px;
+    }
+
+
+    .customers-hero {
+
+        padding: 24px;
+
+        border-radius: 17px;
+    }
+
+
+    .customers-hero h1 {
+
+        font-size: 28px;
+    }
+
+
+    .hero-actions {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .customer-count {
+
+        width: fit-content;
+    }
+
+
+    .customers-panel {
+
+        border-radius: 15px;
+    }
+
+
+    .panel-header {
+
+        padding: 22px;
+    }
+
+
+    .summary-card {
+
+        min-height: 150px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

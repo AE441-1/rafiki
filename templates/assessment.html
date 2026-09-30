@@ -1,0 +1,1266 @@
+{% extends "base.html" %}
+
+{% block title %}
+Risk Assessment | Rafiki Mkombozi
+{% endblock %}
+
+{% block content %}
+
+<div class="assessment-container">
+
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+    <div class="assessment-header">
+
+        <span>
+            RISK ASSESSMENT
+        </span>
+
+        <h1>
+            Tell Rafiki about your situation
+        </h1>
+
+        <p>
+            Provide your profile and location information.
+            Rafiki will use your location to obtain
+            climate information and assess potential
+            environmental risks.
+        </p>
+
+    </div>
+
+
+    <!-- ==================================================
+         FORM CARD
+    ================================================== -->
+
+    <div class="form-card">
+
+        <form method="POST" id="assessment-form">
+
+            {% if selected_farm %}
+                <input type="hidden" name="farm_id" value="{{ selected_farm.id }}">
+            {% endif %}
+
+            <input type="hidden" name="gps_latitude" id="gps_latitude">
+            <input type="hidden" name="gps_longitude" id="gps_longitude">
+            <input type="hidden" name="osm_display_name" id="osm_display_name">
+
+
+            <!-- ==================================================
+                 01 — CUSTOMER TYPE
+                 ================================================== -->
+
+            <h4>
+                01 — Customer Type
+            </h4>
+
+            <div class="mb-4">
+
+                <select
+                    name="customer_type"
+                    class="form-control"
+                    required
+                >
+
+                    <option value="">
+                        Select customer type
+                    </option>
+
+                    <option value="farmer"{% if selected_farm %} selected{% endif %}>
+                        Smallholder Farmer
+                    </option>
+
+                    <option value="informal_business">
+                        Informal Business
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ==================================================
+                 02 — LOCATION
+                 ================================================== -->
+
+            <h4>
+                02 — Location
+            </h4>
+
+            <p class="form-help">
+
+                Enter your Region, District and Ward. OpenStreetMap will find the coordinates automatically when all three fields are filled.
+
+            </p>
+
+
+            <div class="row">
+
+                <!-- REGION -->
+
+                <div class="col-md-4 mb-3">
+
+                    <label for="region">
+                        Region
+                    </label>
+
+                    <input
+                        type="text"
+                        id="region"
+                        name="region"
+                        class="form-control"
+                        placeholder="e.g. Morogoro"
+                        value="{{ selected_farm.region if selected_farm else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DISTRICT -->
+
+                <div class="col-md-4 mb-3">
+
+                    <label for="district">
+                        District
+                    </label>
+
+                    <input
+                        type="text"
+                        id="district"
+                        name="district"
+                        class="form-control"
+                        placeholder="e.g. Kilosa"
+                        value="{{ selected_farm.district if selected_farm else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- WARD -->
+
+                <div class="col-md-4 mb-3">
+
+                    <label for="ward">
+                        Ward
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ward"
+                        name="ward"
+                        class="form-control"
+                        placeholder="e.g. Magole"
+                        value="{{ selected_farm.ward if selected_farm else '' }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="location-detection">
+                <button
+                    type="button"
+                    id="detect-location"
+                    class="btn btn-outline-info"
+                >
+                    📍 Use my current location
+                </button>
+                <span id="location-status" role="status" aria-live="polite">
+                    Coordinates will be looked up automatically after you enter your region, district, and ward.
+                </span>
+                <button type="button" id="geocode-address" class="btn btn-outline-secondary">
+                    Find coordinates
+                </button>
+                <small id="coordinate-preview" class="coordinate-preview" hidden></small>
+                <a id="osm-map-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+                    View detected point on OpenStreetMap
+                </a>
+                <small>Address lookup © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a></small>
+            </div>
+
+
+            <!-- LOCATION INFORMATION -->
+
+            <div class="location-info">
+
+                <div class="location-icon">
+                    📍
+                </div>
+
+                <div>
+                    <strong>Location-based climate assessment</strong>
+                    <p>
+                        You can use your device GPS or enter the address. After you submit the assessment, recent historical climate data for the resolved coordinates is used to calculate drought, flood, and rainfall risk indicators.
+                    </p>
+                </div>
+            </div>
+
+            <section id="climate-risk-preview" class="climate-risk-preview mt-4" hidden aria-live="polite">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <strong>Local climate-risk estimate</strong>
+                        <p id="climate-preview-status" class="mb-0">Analyzing recent climate data for this location…</p>
+                    </div>
+                    <small id="climate-preview-period" class="text-muted"></small>
+                </div>
+                <div class="climate-indicator-grid" aria-label="Local climate risk indicators">
+                    <div class="climate-indicator-card drought-indicator">
+                        <i class="fa-solid fa-sun" aria-hidden="true"></i>
+                        <span>Drought</span>
+                        <strong id="preview-drought">—</strong>
+                    </div>
+                    <div class="climate-indicator-card rainfall-indicator">
+                        <i class="fa-solid fa-cloud-rain" aria-hidden="true"></i>
+                        <span>Rainfall</span>
+                        <strong id="preview-rainfall">—</strong>
+                    </div>
+                    <div class="climate-indicator-card pest-indicator">
+                        <i class="fa-solid fa-bug" aria-hidden="true"></i>
+                        <span>Pest pressure</span>
+                        <strong id="preview-pest-pressure">—</strong>
+                    </div>
+                    <div class="climate-indicator-card flood-indicator">
+                        <i class="fa-solid fa-water" aria-hidden="true"></i>
+                        <span>Flood</span>
+                        <strong id="preview-flood">—</strong>
+                    </div>
+                </div>
+                <div class="climate-overall-score mt-3">
+                    <span>Overall risk</span>
+                    <strong id="preview-overall">—</strong>
+                </div>
+                <p class="small-text mt-3 mb-0">Pest-pressure proxy: 75% warm/wet days (18–35°C with at least 1 mm rain) plus 25% heavy-rain days (10 mm or more). It indicates possible crop pest/disease conditions; it does not measure pesticide use, residue, or human exposure.</p>
+            </section>
+
+
+            <!-- ==================================================
+                 03 — PROFILE
+                 ================================================== -->
+            <h4 class="mt-4">
+                03 — Profile
+            </h4>
+
+
+            <div class="row">
+
+
+                <!-- CROP TYPE -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label for="crop_type">
+                        Crop Type
+                    </label>
+
+                    <input
+                        type="text"
+                        id="crop_type"
+                        name="crop_type"
+                        class="form-control"
+                        placeholder="e.g. Maize"
+                        value="{{ selected_farm.crop_type if selected_farm else '' }}"
+                    >
+
+                </div>
+
+
+                <!-- FARM SIZE -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label for="farm_size">
+                        Farm Size (Acres)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="farm_size"
+                        name="farm_size"
+                        class="form-control"
+                        min="0"
+                        step="0.1"
+                        placeholder="e.g. 5"
+                        value="{{ selected_farm.farm_size if selected_farm else '' }}"
+                    >
+
+                </div>
+
+
+                <!-- BUSINESS TYPE -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label for="business_type">
+                        Business Type
+                    </label>
+
+                    <input
+                        type="text"
+                        id="business_type"
+                        name="business_type"
+                        class="form-control"
+                        placeholder="e.g. Retail shop"
+                    >
+
+                </div>
+
+
+                <!-- STOCK VALUE -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label for="stock_value">
+                        Stock Value (TZS)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock_value"
+                        name="stock_value"
+                        class="form-control"
+                        min="0"
+                        step="1000"
+                        placeholder="e.g. 500000"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 04 — AUTOMATIC CLIMATE ANALYSIS
+                 ================================================== -->
+
+            <h4 class="mt-4">
+                04 — Climate Risk Analysis
+            </h4>
+
+            <div class="climate-info">
+
+                <div class="climate-icon">
+                    🌦️
+                </div>
+
+                <div>
+
+                    <strong>
+                        Climate data will be collected automatically
+                    </strong>
+
+                    <p>
+                        You do not need to enter drought,
+                        flood or rainfall risk percentages.
+                        Rafiki will use your location to obtain
+                        climate information and calculate the
+                        relevant risk indicators.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ANALYSIS PROCESS
+                 ================================================== -->
+
+            <div class="analysis-process">
+
+                <div class="process-item">
+
+                    <span class="process-number">
+                        1
+                    </span>
+
+                    <span>
+                        Identify location
+                    </span>
+
+                </div>
+
+
+                <div class="process-arrow">
+                    →
+                </div>
+
+
+                <div class="process-item">
+
+                    <span class="process-number">
+                        2
+                    </span>
+
+                    <span>
+                        Retrieve coordinates
+                    </span>
+
+                </div>
+
+
+                <div class="process-arrow">
+                    →
+                </div>
+
+
+                <div class="process-item">
+
+                    <span class="process-number">
+                        3
+                    </span>
+
+                    <span>
+                        Analyze climate
+                    </span>
+
+                </div>
+
+
+                <div class="process-arrow">
+                    →
+                </div>
+
+
+                <div class="process-item">
+
+                    <span class="process-number">
+                        4
+                    </span>
+
+                    <span>
+                        Calculate risk
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 SUBMIT
+                 ================================================== -->
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-lg mt-4">
+
+                Analyze My Risk →
+
+            </button>
+
+
+            <!-- SECURITY / PRIVACY NOTE -->
+
+            <p class="form-footer">
+
+                Your information is used to generate your
+                risk assessment and relevant financial
+                protection recommendations.
+
+            </p>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- ============================================================
+     PAGE STYLES
+     ============================================================ -->
+
+<style>
+
+    .assessment-container {
+
+        min-height: 100vh;
+
+        padding: 50px 0 80px;
+
+    }
+
+
+    .assessment-header {
+
+        text-align: center;
+
+        margin-bottom: 35px;
+
+    }
+
+
+    .assessment-header span {
+
+        color: #19d3ae;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+        letter-spacing: 2px;
+
+    }
+
+
+    .assessment-header h1 {
+
+        margin-top: 12px;
+
+        color: #ffffff;
+
+        font-size: 36px;
+
+        font-weight: 700;
+
+    }
+
+
+    .assessment-header p {
+
+        max-width: 700px;
+
+        margin: 15px auto 0;
+
+        color: #a7b0bd;
+
+        line-height: 1.7;
+
+    }
+
+
+    .form-card {
+
+        max-width: 900px;
+
+        margin: auto;
+
+        padding: 35px;
+
+        background: rgba(20, 25, 31, 0.96);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        border-radius: 18px;
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+    }
+
+
+    .form-card h4 {
+
+        color: #ffffff;
+
+        font-size: 17px;
+
+        font-weight: 700;
+
+        margin-bottom: 18px;
+
+        padding-bottom: 10px;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    }
+
+
+    .form-card label {
+
+        color: #dce3ea;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        margin-bottom: 7px;
+
+    }
+
+
+    .form-control {
+
+        background: #10151a !important;
+
+        color: #ffffff !important;
+
+        border: 1px solid #303942 !important;
+
+        border-radius: 9px;
+
+        min-height: 46px;
+
+    }
+
+
+    .form-control:focus {
+
+        border-color: #19d3ae !important;
+
+        box-shadow: 0 0 0 0.15rem rgba(25, 211, 174, 0.15) !important;
+
+    }
+
+
+    .form-control::placeholder {
+
+        color: #697581;
+
+    }
+
+
+    select.form-control option {
+
+        background: #10151a;
+
+        color: #ffffff;
+
+    }
+
+
+    .form-help {
+
+        color: #8995a2;
+
+        font-size: 13px;
+
+        line-height: 1.7;
+
+        margin-bottom: 20px;
+
+    }
+
+
+    .location-info {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 15px;
+
+        padding: 16px 18px;
+
+        margin-top: 5px;
+
+        background: rgba(25, 211, 174, 0.06);
+
+        border: 1px solid rgba(25, 211, 174, 0.15);
+
+        border-radius: 12px;
+
+    }
+
+
+    .location-icon {
+        font-size: 27px;
+    }
+
+    .location-info strong {
+        color: #19d3ae;
+        font-size: 14px;
+    }
+
+    .location-info p {
+        color: #8e99a5;
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 4px 0 0;
+    }
+
+    .climate-risk-preview {
+        padding: 20px;
+        border: 1px solid rgba(25, 211, 174, 0.2);
+        border-radius: 14px;
+        background: rgba(8, 23, 23, 0.72);
+    }
+
+    .climate-risk-preview > div:first-child strong {
+        color: #19d3ae;
+    }
+
+    .climate-risk-preview > div:first-child p {
+        color: #a7b0bd;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .climate-risk-preview .metric-card {
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+    }
+
+    .climate-risk-preview .metric-card span {
+        display: block;
+        color: #91aaa5;
+        font-size: 10px;
+        letter-spacing: 0.06em;
+    }
+
+    .climate-risk-preview .metric-card strong {
+        display: block;
+        color: #e8f4f1;
+        font-size: 22px;
+        margin-top: 6px;
+    }
+
+    .coordinate-preview {
+        color: #dce9e5;
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+    }
+
+    .climate-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 18px;
+        background: rgba(34, 139, 230, 0.08);
+        border: 1px solid rgba(34, 139, 230, 0.18);
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+
+
+    .climate-icon {
+
+        font-size: 30px;
+
+    }
+
+
+    .climate-info strong {
+
+        color: #ffffff;
+
+        font-size: 14px;
+
+    }
+
+
+    .climate-info p {
+
+        color: #8995a2;
+
+        font-size: 13px;
+
+        line-height: 1.7;
+
+        margin: 5px 0 0;
+
+    }
+
+
+    .analysis-process {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+        padding: 20px;
+
+        margin-top: 20px;
+
+        background: rgba(255, 255, 255, 0.025);
+
+        border-radius: 12px;
+
+    }
+
+
+    .process-item {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        color: #c7d0d9;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+    }
+
+
+    .process-number {
+
+        width: 25px;
+
+        height: 25px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #19d3ae;
+
+        color: #07110f;
+
+        font-weight: 800;
+
+    }
+
+
+    .process-arrow {
+
+        color: #53606c;
+
+        font-size: 18px;
+
+    }
+
+
+        .climate-indicator-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+
+            gap: 12px;
+
+        }
+
+
+        .climate-indicator-card {
+
+            display: grid;
+
+            min-width: 0;
+
+            min-height: 112px;
+
+            align-content: center;
+
+            justify-items: center;
+
+            gap: 7px;
+
+            padding: 12px 8px;
+
+            border: 1px solid rgba(25, 211, 174, 0.16);
+
+            border-radius: 12px;
+
+            background: rgba(7, 19, 19, 0.56);
+
+            text-align: center;
+
+        }
+
+
+        .climate-indicator-card i {
+
+            font-size: 22px;
+
+        }
+
+
+        .drought-indicator i { color: #f3bd52; }
+        .rainfall-indicator i { color: #56b4e9; }
+        .pest-indicator i { color: #9acb62; }
+        .flood-indicator i { color: #52a9d8; }
+
+
+        .climate-indicator-card span {
+
+            color: #a7b0bd;
+
+            font-size: 11px;
+
+            line-height: 1.3;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        .climate-indicator-card strong {
+
+            color: #e8f4f1;
+
+            font-size: 20px;
+
+            line-height: 1.1;
+
+            white-space: nowrap;
+
+        }
+
+
+        .climate-overall-score {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding: 12px 14px;
+
+            border: 1px solid rgba(25, 211, 174, 0.16);
+
+            border-radius: 10px;
+
+            background: rgba(25, 211, 174, 0.06);
+
+            color: #a7b0bd;
+
+            font-size: 13px;
+
+        }
+
+
+        .climate-overall-score strong {
+
+            color: #19d3ae;
+
+            font-size: 20px;
+
+            white-space: nowrap;
+
+        }
+
+
+    .btn-primary {
+
+        background: #19d3ae !important;
+
+        border-color: #19d3ae !important;
+
+        color: #07110f !important;
+
+        font-weight: 700;
+
+        border-radius: 10px;
+
+        padding: 12px 25px;
+
+    }
+
+
+    .btn-primary:hover {
+
+        background: #13b997 !important;
+
+        border-color: #13b997 !important;
+
+    }
+
+
+    .form-footer {
+
+        color: #687582;
+
+        font-size: 11px;
+
+        text-align: center;
+
+        margin-top: 18px;
+
+        margin-bottom: 0;
+
+    }
+
+
+    @media (max-width: 768px) {
+
+        .assessment-container {
+
+            padding: 30px 15px 60px;
+
+        }
+
+
+        .assessment-header h1 {
+
+            font-size: 28px;
+
+        }
+
+
+        .form-card {
+
+            padding: 22px;
+
+        }
+
+
+        .analysis-process {
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+        }
+
+
+        .process-arrow {
+
+            display: none;
+
+        }
+
+
+        .climate-indicator-grid {
+
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: 8px;
+
+        }
+
+
+        .climate-indicator-card {
+
+            min-height: 96px;
+
+        }
+
+    }
+
+</style>
+
+<script>
+(() => {
+    const gpsButton = document.getElementById("detect-location");
+    const geocodeButton = document.getElementById("geocode-address");
+    const form = document.getElementById("assessment-form");
+    const status = document.getElementById("location-status");
+    const mapLink = document.getElementById("osm-map-link");
+    const coordinatePreview = document.getElementById("coordinate-preview");
+    const climateRiskPreview = document.getElementById("climate-risk-preview");
+    const climatePreviewStatus = document.getElementById("climate-preview-status");
+    const climatePreviewPeriod = document.getElementById("climate-preview-period");
+    const latitudeInput = document.getElementById("gps_latitude");
+    const longitudeInput = document.getElementById("gps_longitude");
+    const addressInput = document.getElementById("osm_display_name");
+    const addressFields = [
+        document.getElementById("region"),
+        document.getElementById("district"),
+        document.getElementById("ward")
+    ];
+
+    if (!gpsButton || !geocodeButton || !form) return;
+
+    let lookupTimer = null;
+    let lookupSequence = 0;
+    let lastResolvedAddress = "";
+    let activeController = null;
+
+    const translate = (value) => window.rafikiTranslate
+        ? window.rafikiTranslate(value)
+        : value;
+
+    const getAddress = () => addressFields.map((field) => field.value.trim());
+    const addressKey = (parts) => parts.map((part) => part.toLocaleLowerCase()).join("|");
+
+    function showCoordinates(data) {
+        latitudeInput.value = data.latitude;
+        longitudeInput.value = data.longitude;
+        addressInput.value = data.display_name || "";
+        const latitude = Number(data.latitude);
+        const longitude = Number(data.longitude);
+        coordinatePreview.textContent = `${translate("Latitude")} ${latitude.toFixed(6)} · ${translate("Longitude")} ${longitude.toFixed(6)}`;
+        coordinatePreview.hidden = false;
+        mapLink.href = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(latitude)}&mlon=${encodeURIComponent(longitude)}#map=17/${encodeURIComponent(latitude)}/${encodeURIComponent(longitude)}`;
+        mapLink.hidden = false;
+    }
+
+    function clearCoordinates() {
+        latitudeInput.value = "";
+        longitudeInput.value = "";
+        addressInput.value = "";
+        coordinatePreview.textContent = "";
+        coordinatePreview.hidden = true;
+        mapLink.hidden = true;
+        climateRiskPreview.hidden = true;
+    }
+
+    async function previewClimateRisk(location, expectedSequence) {
+        climateRiskPreview.hidden = false;
+        climatePreviewStatus.textContent = translate("Analyzing recent climate data for this location…");
+        climatePreviewPeriod.textContent = "";
+
+        try {
+            const response = await fetch("{{ url_for('climate_risk_preview') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    location_address: location.display_name || ""
+                })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "Climate analysis is unavailable for this location.");
+            if (expectedSequence !== lookupSequence) return;
+
+            document.getElementById("preview-drought").textContent = `${data.drought_score}%`;
+            document.getElementById("preview-flood").textContent = `${data.flood_score}%`;
+            document.getElementById("preview-rainfall").textContent = `${data.rainfall_score}%`;
+            document.getElementById("preview-overall").textContent = `${data.overall_score}%`;
+            document.getElementById("preview-pest-pressure").textContent = `${data.pest_pressure_score}%`;
+            climatePreviewPeriod.textContent = `${data.summary.days_analyzed} ${translate("days analyzed")}`;
+            climatePreviewStatus.textContent = translate("Climate-risk estimates ready. Submit the assessment to save them to your profile.");
+        } catch (error) {
+            if (expectedSequence !== lookupSequence) return;
+            climatePreviewStatus.textContent = `${translate(error.message)} ${translate("The full assessment will retry the climate lookup.")}`;
+        }
+    }
+
+    async function lookupAddress() {
+        const parts = getAddress();
+        if (parts.some((part) => !part)) {
+            status.textContent = translate("Enter your region, district, and ward to find coordinates.");
+            return;
+        }
+
+        const key = addressKey(parts);
+        if (key === lastResolvedAddress && latitudeInput.value && longitudeInput.value) return;
+
+        const sequence = ++lookupSequence;
+        if (activeController) activeController.abort();
+        activeController = new AbortController();
+        geocodeButton.disabled = true;
+        status.textContent = translate("Finding coordinates from OpenStreetMap…");
+
+        try {
+            const response = await fetch("{{ url_for('geocode_address') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ region: parts[0], district: parts[1], ward: parts[2] }),
+                signal: activeController.signal
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "OpenStreetMap could not find that address.");
+            if (sequence !== lookupSequence || key !== addressKey(getAddress())) return;
+
+            showCoordinates(data);
+            lastResolvedAddress = key;
+            status.textContent = `${translate("Coordinates found:")} ${data.display_name || ""}`;
+            await previewClimateRisk(data, sequence);
+        } catch (error) {
+            if (error.name === "AbortError" || sequence !== lookupSequence) return;
+            clearCoordinates();
+            status.textContent = `${translate(error.message)} ${translate("You can adjust the address or use GPS.")}`;
+        } finally {
+            if (sequence === lookupSequence) geocodeButton.disabled = false;
+        }
+    }
+
+    addressFields.forEach((field) => {
+        field.addEventListener("input", () => {
+            const key = addressKey(getAddress());
+            if (key !== lastResolvedAddress) {
+                lookupSequence += 1;
+                if (activeController) activeController.abort();
+                geocodeButton.disabled = false;
+                clearCoordinates();
+            }
+            clearTimeout(lookupTimer);
+            if (getAddress().every(Boolean)) {
+                lookupTimer = setTimeout(lookupAddress, 1200);
+            } else {
+                status.textContent = translate("Enter your region, district, and ward to find coordinates.");
+            }
+        });
+    });
+
+    geocodeButton.addEventListener("click", lookupAddress);
+
+    gpsButton.addEventListener("click", () => {
+        if (!navigator.geolocation) {
+            status.textContent = translate("This browser does not support location detection. Enter your location manually.");
+            return;
+        }
+
+        gpsButton.disabled = true;
+        clearTimeout(lookupTimer);
+        lookupSequence += 1;
+        const gpsSequence = lookupSequence;
+        if (activeController) activeController.abort();
+        geocodeButton.disabled = false;
+        status.textContent = translate("Requesting your device location…");
+        mapLink.hidden = true;
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            status.textContent = translate("Looking up the address with OpenStreetMap…");
+
+            try {
+                const response = await fetch("{{ url_for('reverse_geocode') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ latitude, longitude })
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "OpenStreetMap could not find this address.");
+                }
+                if (gpsSequence !== lookupSequence) return;
+
+                addressFields[0].value = data.region || "";
+                addressFields[1].value = data.district || "";
+                addressFields[2].value = data.ward || "";
+                showCoordinates({ ...data, latitude, longitude });
+                lastResolvedAddress = addressKey(getAddress());
+
+                const missing = ["region", "district", "ward"].filter((field) => !data[field]);
+                const missingLabels = missing.map((field) => translate({
+                    region: "Region",
+                    district: "District",
+                    ward: "Ward"
+                }[field]));
+                status.textContent = missing.length
+                    ? `${translate("Location found. Please complete:")} ${missingLabels.join(", ")}`
+                    : `${translate("Coordinates found:")} ${data.display_name || ""}`;
+                await previewClimateRisk({ ...data, latitude, longitude }, gpsSequence);
+            } catch (error) {
+                clearCoordinates();
+                status.textContent = `${translate(error.message)} ${translate("You can enter the address manually.")}`;
+            } finally {
+                gpsButton.disabled = false;
+            }
+        }, (error) => {
+            const messages = {
+                1: "Location permission was denied. Allow it in your browser settings or enter your location manually.",
+                2: "Your device could not determine its location. Try again or enter it manually.",
+                3: "Location lookup timed out. Try again or enter it manually."
+            };
+            status.textContent = translate(messages[error.code] || "Could not detect your location. Enter it manually.");
+            gpsButton.disabled = false;
+        }, {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 0
+        });
+    });
+})();
+</script>
+{% endblock %}

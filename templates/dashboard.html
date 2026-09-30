@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rafiki Mkombozi - Customer Dashboard</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.58),
+                    rgba(0, 0, 0, 0.58)
+                ),
+                url("/static/css/images/background.jpeg")
+                center center / cover fixed no-repeat;
+
+            color: #222;
+        }
+
+
+        /* =========================================================
+           MAIN LAYOUT
+        ========================================================= */
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+
+            background: linear-gradient(180deg, #091a1b 0%, #102428 100%);
+
+            color: white;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            padding: 25px 15px;
+
+            box-shadow: 5px 0 30px rgba(5, 10, 15, 0.35);
+
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+
+            background: #16a085;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto 10px;
+
+            font-size: 25px;
+        }
+
+        .logo h2 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: #aeb7c6;
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 7px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 13px 15px;
+
+            border-radius: 9px;
+
+            color: #d8dee9;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: 0.25s;
+        }
+
+        .nav-menu a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.10);
+            color: white;
+        }
+
+        .nav-menu a.active {
+            background: linear-gradient(135deg, #1fb39d 0%, #128a76 100%);
+            color: white;
+
+            box-shadow: 0 12px 25px rgba(31, 179, 157, 0.28);
+        }
+
+
+        /* =========================================================
+           LOGOUT
+        ========================================================= */
+
+        .logout {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 25px;
+        }
+
+        .logout a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 13px 15px;
+
+            color: #ffb4b4;
+
+            text-decoration: none;
+
+            border-radius: 9px;
+
+            transition: 0.2s;
+        }
+
+        .logout a:hover {
+            background: rgba(255,0,0,0.10);
+            color: #ff6b6b;
+        }
+
+
+        /* =========================================================
+           MAIN CONTENT
+        ========================================================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            padding: 28px 28px 36px;
+            background: linear-gradient(180deg, rgba(244,248,247,0.92), rgba(237,243,242,0.92));
+        }
+
+
+        /* =========================================================
+           TOP HEADER
+        ========================================================= */
+
+        .top-header {
+            background: rgba(255,255,255,0.90);
+            border: 1px solid rgba(15, 38, 39, 0.08);
+            border-radius: 22px;
+            padding: 24px 26px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        .welcome h1 {
+            color: #13252f;
+            font-size: clamp(26px, 3vw, 34px);
+            margin-bottom: 6px;
+            letter-spacing: -0.04em;
+        }
+
+        .welcome p {
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .site-preference-btn {
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 8px;
+            padding: 10px 12px;
+            background: #162525;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+
+        .btn {
+            border: none;
+
+            padding: 11px 17px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #16a085;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0f766e;
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e7ff;
+        }
+
+
+        /* =========================================================
+           METRIC CARDS
+        ========================================================= */
+
+        .metrics-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(15, 38, 39, 0.06);
+            border-radius: 20px;
+            padding: 20px 20px 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: 0.25s;
+            min-height: 124px;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 10px 25px rgba(0,0,0,0.14);
+        }
+
+        .metric-icon {
+            width: 55px;
+            height: 55px;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+        }
+
+        .metric-blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .metric-orange {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .metric-green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .metric-purple {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .metric-info h3 {
+            font-size: 30px;
+            color: #0f172a;
+            margin-bottom: 4px;
+            letter-spacing: -0.05em;
+        }
+
+        .metric-info p {
+            font-size: 12px;
+
+            color: #6b7280;
+        }
+
+
+        /* =========================================================
+           STATUS SECTION
+        ========================================================= */
+
+        .section-title {
+            color: #111827;
+
+            font-size: 19px;
+
+            margin-bottom: 15px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .status-card {
+            background: rgba(255,255,255,0.92);
+            border-radius: 18px;
+            padding: 22px 20px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            border-left: 5px solid;
+        }
+
+        .status-card.pending {
+            border-color: #f59e0b;
+        }
+
+        .status-card.approved {
+            border-color: #16a34a;
+        }
+
+        .status-card.rejected {
+            border-color: #dc2626;
+        }
+
+        .status-card-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .status-card h3 {
+            color: #374151;
+
+            font-size: 15px;
+        }
+
+        .status-card i {
+            font-size: 20px;
+        }
+
+        .status-card.pending i {
+            color: #f59e0b;
+        }
+
+        .status-card.approved i {
+            color: #16a34a;
+        }
+
+        .status-card.rejected i {
+            color: #dc2626;
+        }
+
+        .status-number {
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #111827;
+        }
+
+
+        /* =========================================================
+           TWO COLUMN AREA
+        ========================================================= */
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+
+        /* =========================================================
+           CARD
+        ========================================================= */
+
+        .card {
+            background: rgba(255,255,255,0.92);
+            border-radius: 20px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            padding: 22px;
+            border: 1px solid rgba(15, 38, 39, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+        .card-header h2 {
+            color: #111827;
+
+            font-size: 18px;
+        }
+
+        .card-header a {
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           TABLE
+        ========================================================= */
+
+        .table-container {
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #111827;
+
+            color: white;
+
+            padding: 13px;
+
+            text-align: left;
+
+            font-size: 12px;
+        }
+
+        table th:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        table th:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        table td {
+            padding: 14px 13px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            color: #374151;
+
+            font-size: 13px;
+        }
+
+        table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+
+        /* =========================================================
+           STATUS BADGES
+        ========================================================= */
+
+        .badge {
+            display: inline-block;
+
+            padding: 6px 11px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            text-transform: capitalize;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+
+        /* =========================================================
+           RISK CARD
+        ========================================================= */
+
+        .risk-card {
+            text-align: center;
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.10);
+        }
+
+        .risk-card h2 {
+            color: #111827;
+
+            font-size: 18px;
+
+            margin-bottom: 20px;
+        }
+
+        .risk-circle {
+            width: 145px;
+            height: 145px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 50%;
+
+            background:
+                conic-gradient(
+                    #2563eb
+                    {% if risk and risk.overall_score is not none %}
+                        {{ risk.overall_score }}%
+                    {% else %}
+                        0%
+                    {% endif %},
+                    #e5e7eb 0
+                );
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        .risk-inner {
+            width: 110px;
+            height: 110px;
+
+            background: white;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        .risk-inner strong {
+            font-size: 28px;
+
+            color: #111827;
+        }
+
+        .risk-inner span {
+            color: #6b7280;
+
+            font-size: 11px;
+        }
+
+        .risk-description {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           QUICK SERVICES
+        ========================================================= */
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.92);
+            padding: 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+            transition: 0.25s;
+            border: 1px solid rgba(15, 38, 39, 0.05);
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 10px 25px rgba(0,0,0,0.13);
+        }
+
+        .service-icon {
+            width: 45px;
+            height: 45px;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 13px;
+        }
+
+        .service-card h3 {
+            color: #111827;
+
+            font-size: 15px;
+
+            margin-bottom: 6px;
+        }
+
+        .service-card p {
+            color: #6b7280;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           INFORMATION PANEL
+        ========================================================= */
+
+        .info-panel {
+            background: linear-gradient(135deg, rgba(22, 160, 133, 0.12), rgba(255,255,255,0.92));
+            border: 1px solid rgba(22, 160, 133, 0.12);
+            border-radius: 18px;
+            padding: 22px;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1.8fr) minmax(300px, 0.9fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .summary-panel {
+            background: linear-gradient(135deg, rgba(12, 76, 77, 0.96), rgba(18, 138, 118, 0.96));
+            border-radius: 22px;
+            color: #f3fffd;
+            padding: 26px;
+            min-height: 220px;
+            box-shadow: 0 22px 48px rgba(12, 76, 77, 0.18);
+        }
+
+        .summary-panel .eyebrow {
+            display: inline-flex;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.14);
+            color: rgba(255,255,255,0.88);
+            margin-bottom: 16px;
+        }
+
+        .summary-panel h2 {
+            font-size: clamp(28px, 2vw, 36px);
+            line-height: 1.15;
+            margin-bottom: 12px;
+            letter-spacing: -0.05em;
+        }
+
+        .summary-panel p {
+            color: rgba(243,255,253,0.82);
+            max-width: 540px;
+            line-height: 1.7;
+        }
+
+        .summary-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .summary-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            color: #f9fffe;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .mini-card {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(15, 38, 39, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        .mini-card h3 {
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: #142a2d;
+        }
+
+        .progress-wrap {
+            display: grid;
+            gap: 16px;
+        }
+
+        .progress-row {
+            display: grid;
+            gap: 8px;
+        }
+
+        .progress-row .label {
+            display: flex;
+            justify-content: space-between;
+            color: #53616b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: #e8eef1;
+            overflow: hidden;
+        }
+
+        .progress-bar span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #16a085, #4cc9b0);
+        }
+
+        .info-icon {
+            width: 45px;
+            height: 45px;
+
+            flex-shrink: 0;
+
+            background: #16a085;
+
+            color: white;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-panel h3 {
+            color: #111827;
+
+            font-size: 16px;
+
+            margin-bottom: 7px;
+        }
+
+        .info-panel p {
+            color: #4b5563;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        .farms-overview-card {
+            margin-bottom: 25px;
+        }
+
+        .card-subtitle {
+            color: #718096;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-sm {
+            padding: 8px 11px;
+            font-size: 11px;
+        }
+
+        .farm-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .farm-overview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid #e6eeeb;
+            border-radius: 13px;
+            color: inherit;
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .farm-overview-item:hover {
+            border-color: #8bd4c2;
+            background: #f5fbf9;
+        }
+
+        .farm-overview-icon {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            color: #128a76;
+            background: #e4f5ef;
+        }
+
+        .farm-overview-copy {
+            min-width: 0;
+            display: grid;
+            gap: 4px;
+        }
+
+        .farm-overview-copy strong,
+        .farm-overview-copy small {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .farm-overview-copy strong {
+            color: #18332f;
+            font-size: 13px;
+        }
+
+        .farm-overview-copy small {
+            color: #77857f;
+            font-size: 11px;
+        }
+
+        .farm-overview-score {
+            margin-left: auto;
+            color: #128a76;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .farm-empty-inline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f5fbf9;
+            border-radius: 12px;
+            color: #5e706a;
+            font-size: 13px;
+        }
+
+        .farm-empty-inline i {
+            color: #128a76;
+            font-size: 20px;
+        }
+
+        .farm-empty-inline a {
+            margin-left: auto;
+            color: #128a76;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================= */
+
+        .empty-state {
+            text-align: center;
+
+            padding: 35px 15px;
+
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 35px;
+
+            color: #9ca3af;
+
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1100px) {
+
+            .metrics-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 70px;
+
+                padding: 20px 8px;
+            }
+
+            .logo h2,
+            .logo p,
+            .nav-menu span,
+            .logout span {
+                display: none;
+            }
+
+            .logo-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .nav-menu a {
+                justify-content: center;
+
+                padding: 13px 5px;
+            }
+
+            .logout a {
+                justify-content: center;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .farm-overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-header {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+        }
+
+
+        @media (max-width: 550px) {
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 12px;
+            }
+
+            .summary-panel {
+                min-height: auto;
+            }
+
+            .header-actions {
+                width: 100%;
+
+                flex-direction: column;
+            }
+
+            .farm-empty-inline {
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .farm-empty-inline a {
+                margin-left: 32px;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        html[data-theme="dark"] .main-content {
+            background: rgba(7, 19, 19, 0.76) !important;
+            color: #e8f4f1;
+        }
+
+        html[data-theme="dark"] body {
+            color: #e8f4f1;
+        }
+
+        html[data-theme="dark"] .top-header,
+        html[data-theme="dark"] .card,
+        html[data-theme="dark"] .metric-card,
+        html[data-theme="dark"] .status-card,
+        html[data-theme="dark"] .service-card,
+        html[data-theme="dark"] .info-panel,
+        html[data-theme="dark"] .risk-card {
+            background: rgba(16, 31, 31, 0.96) !important;
+            color: #e8f4f1 !important;
+            border-color: rgba(255,255,255,.1);
+        }
+
+        html[data-theme="dark"] .top-header h1,
+        html[data-theme="dark"] .card h2,
+        html[data-theme="dark"] .card h3,
+        html[data-theme="dark"] .metric-card h2,
+        html[data-theme="dark"] .status-card h3,
+        html[data-theme="dark"] .service-card h3,
+        html[data-theme="dark"] .welcome p,
+        html[data-theme="dark"] .card p,
+        html[data-theme="dark"] .status-card p,
+        html[data-theme="dark"] .service-card p,
+        html[data-theme="dark"] .info-panel p {
+            color: #d6e3df !important;
+        }
+
+        html[data-theme="light"] body {
+            background: linear-gradient(rgba(247,250,248,.70), rgba(247,250,248,.70)), url("/static/css/images/background.jpeg") center center / cover fixed no-repeat !important;
+            color: #20332d;
+        }
+
+        html[data-theme="light"] .main-content {
+            background: rgba(246, 250, 248, 0.88) !important;
+            color: #20332d;
+        }
+
+        html[data-theme="light"] .site-preference-btn {
+            background: #fff;
+            color: #20332d;
+            border-color: rgba(24,55,46,.2);
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <i class="fas fa-hand-holding-dollar"></i>
+            </div>
+
+            <h2>Rafiki Mkombozi</h2>
+
+            <p>Smart Financial Platform</p>
+
+        </div>
+
+
+        <ul class="nav-menu">
+
+            <li>
+                <a href="{{ url_for('dashboard') }}" class="active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('loan_apply') }}">
+                    <i class="fas fa-file-circle-plus"></i>
+                    <span>Apply for Loan</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('my_loans') }}">
+                    <i class="fas fa-money-check-dollar"></i>
+                    <span>My Loans</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('assessment') }}">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Risk Assessment</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('farms') }}">
+                    <i class="fas fa-tractor"></i>
+                    <span>My Farms</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('recommendations') }}">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Recommendations</span>
+                </a>
+            </li>
+
+            <li>
+            <div class="card farms-overview-card">
+
+                <div class="card-header">
+                    <div>
+                        <h2>My farms</h2>
+                        <p class="card-subtitle">Your registered growing locations</p>
+                    </div>
+
+                    <a href="{{ url_for('farms') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-plus"></i>
+                        Add farm
+                    </a>
+                </div>
+
+                {% if farms %}
+                    <div class="farm-overview-grid">
+                        {% for farm in farms %}
+                            <a class="farm-overview-item" href="{{ url_for('assessment') }}?farm_id={{ farm.id }}">
+                                <span class="farm-overview-icon"><i class="fas fa-seedling"></i></span>
+                                <span class="farm-overview-copy">
+                                    <strong>{{ farm.farm_name }}</strong>
+                                    <small>{{ farm.ward }}, {{ farm.region }} · {{ farm.crop_type or 'Crop not set' }}</small>
+                                </span>
+                                <span class="farm-overview-score">
+                                    {% if farm.overall_score is not none %}
+                                        {{ farm.overall_score }}%
+                                    {% else %}
+                                        <i class="fas fa-arrow-right"></i>
+                                    {% endif %}
+                                </span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="farm-empty-inline">
+                        <i class="fas fa-tractor"></i>
+                        <span>Register your first farm to start monitoring its location and risk.</span>
+                        <a href="{{ url_for('farms') }}">Register a farm</a>
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+                <a href="{{ url_for('policies') }}">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>Insurance</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('my_policies') }}">
+                    <i class="fas fa-file-shield"></i>
+                    <span>My Policies</span>
+                </a>
+            </li>
+
+        </ul>
+
+
+        <div class="logout">
+
+            <a href="{{ url_for('logout') }}">
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =========================================================
+         MAIN CONTENT
+    ========================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="top-header">
+
+            <div class="welcome">
+
+                <h1>
+                    Welcome back{% if session.get('name') %},
+                    {{ session.get('name') }}{% endif %}!
+                </h1>
+
+                <p>
+                    Monitor your loans, financial risk and recommendations.
+                </p>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <select class="site-preference-btn" id="language-toggle" aria-label="Choose language" title="Choose language">
+                    <option value="en">English</option>
+                    <option value="sw">Kiswahili</option>
+                    <option value="fr">Français</option>
+                    <option value="pt">Português</option>
+                </select>
+                <button type="button" class="site-preference-btn" id="voice-guidance" aria-label="Listen to page guidance" title="Listen to page guidance" aria-pressed="false"><i class="fa-solid fa-volume-high" aria-hidden="true"></i><span class="visually-hidden">Listen to page guidance</span></button>
+                <span id="voice-guidance-status" class="visually-hidden" aria-live="polite"></span>
+                <button type="button" class="site-preference-btn" id="theme-toggle" aria-label="Switch to light mode" title="Switch to light mode"><span>Light</span></button>
+
+                <a href="{{ url_for('loan_apply') }}"
+                   class="btn btn-primary">
+
+                    <i class="fas fa-plus"></i>
+
+                    Apply for Loan
+
+                </a>
+
+
+                <a href="{{ url_for('assessment') }}"
+                   class="btn btn-secondary">
+
+                    <i class="fas fa-chart-simple"></i>
+
+                    Risk Assessment
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             MAIN METRICS
+        ====================================================== -->
+
+        <div class="app-shell">
+
+            <div class="summary-panel">
+
+                <div class="eyebrow">Overview</div>
+
+                <h2>Track your finances, loans, and protection in one place.</h2>
+
+                <p>
+                    Review your current portfolio, monitor application progress,
+                    and take the next step with confidence using a simple, unified dashboard.
+                </p>
+
+                <div class="summary-meta">
+                    <span class="summary-pill">
+                        <i class="fas fa-circle-check"></i>
+                        {{ approved_applications|default(0) }} approved
+                    </span>
+
+                    <span class="summary-pill">
+                        <i class="fas fa-hourglass-half"></i>
+                        {{ pending_applications|default(0) }} pending
+                    </span>
+
+                    <span class="summary-pill">
+                        <i class="fas fa-wallet"></i>
+                        {{ active_loans|default(0) }} active loans
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="mini-card">
+
+                <h3>Portfolio health</h3>
+
+                <div class="progress-wrap">
+
+                    <div class="progress-row">
+                        <div class="label">
+                            <span>Risk readiness</span>
+                            <strong>
+                                {% if risk and risk.overall_score is not none %}
+                                    {{ risk.overall_score }}%
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <span style="width: {% if risk and risk.overall_score is not none %}{{ risk.overall_score }}{% else %}0{% endif %}%;"></span>
+                        </div>
+                    </div>
+
+                    <div class="progress-row">
+                        <div class="label">
+                            <span>Loan coverage</span>
+                            <strong>{{ total_applications|default(0) }} apps</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <span style="width: {% if total_applications %}{{ [((total_applications / 10) * 100), 100] | min }}{% else %}0{% endif %}%;"></span>
+                        </div>
+                    </div>
+
+                    <div class="progress-row">
+                        <div class="label">
+                            <span>Financial activity</span>
+                            <strong>{{ active_loans|default(0) }} active</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <span style="width: {% if active_loans %}{{ [((active_loans / 5) * 100), 100] | min }}{% else %}0{% endif %}%;"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="metrics-grid">
+
+
+            <!-- Risk -->
+
+            <div class="metric-card">
+
+                <div class="metric-icon metric-blue">
+
+                    <i class="fas fa-shield-halved"></i>
+
+                </div>
+
+                <div class="metric-info">
+
+                    <h3>
+
+                        {% if risk and risk.overall_score is not none %}
+                            {{ risk.overall_score }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+
+                    </h3>
+
+                    <p>Overall Risk Score</p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Applications -->
+
+            <div class="metric-card">
+
+                <div class="metric-icon metric-orange">
+
+                    <i class="fas fa-file-lines"></i>
+
+                </div>
+
+                <div class="metric-info">
+
+                    <h3>
+                        {{ total_applications|default(0) }}
+                    </h3>
+
+                    <p>Total Loan Applications</p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Pending -->
+
+            <div class="metric-card">
+
+                <div class="metric-icon metric-purple">
+
+                    <i class="fas fa-clock"></i>
+
+                </div>
+
+                <div class="metric-info">
+
+                    <h3>
+                        {{ pending_applications|default(0) }}
+                    </h3>
+
+                    <p>Pending Applications</p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Active -->
+
+            <div class="metric-card">
+
+                <div class="metric-icon metric-green">
+
+                    <i class="fas fa-money-bill-trend-up"></i>
+
+                </div>
+
+                <div class="metric-info">
+
+                    <h3>
+                        {{ active_loans|default(0) }}
+                    </h3>
+
+                    <p>Active Loans</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             APPLICATION STATUS
+        ====================================================== -->
+
+        <h2 class="section-title">
+            Loan Application Status
+        </h2>
+
+
+        <div class="status-grid">
+
+
+            <!-- Pending -->
+
+            <div class="status-card pending">
+
+                <div class="status-card-top">
+
+                    <h3>Pending</h3>
+
+                    <i class="fas fa-clock"></i>
+
+                </div>
+
+                <div class="status-number">
+
+                    {{ pending_applications|default(0) }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Approved -->
+
+            <div class="status-card approved">
+
+                <div class="status-card-top">
+
+                    <h3>Approved</h3>
+
+                    <i class="fas fa-circle-check"></i>
+
+                </div>
+
+                <div class="status-number">
+
+                    {{ approved_applications|default(0) }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Rejected -->
+
+            <div class="status-card rejected">
+
+                <div class="status-card-top">
+
+                    <h3>Rejected</h3>
+
+                    <i class="fas fa-circle-xmark"></i>
+
+                </div>
+
+                <div class="status-number">
+
+                    {{ rejected_applications|default(0) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             RECENT APPLICATIONS + RISK
+        ====================================================== -->
+
+        <div class="two-column">
+
+
+            <!-- Recent Applications -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Recent Loan Applications
+                    </h2>
+
+                    <a href="{{ url_for('my_loans') }}">
+                        View All
+                    </a>
+
+                </div>
+
+
+                {% if recent_applications %}
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+
+                                <th>Amount</th>
+
+                                <th>Purpose</th>
+
+                                <th>Duration</th>
+
+                                <th>Status</th>
+
+                                <th>Date</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        {% for application in recent_applications %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ application.id }}
+                                </td>
+
+                                <td>
+                                    TZS {{ "{:,.0f}".format(application.amount|float) }}
+                                </td>
+
+                                <td>
+                                    {{ application.purpose }}
+                                </td>
+
+                                <td>
+                                    {{ application.duration_months }}
+                                    months
+                                </td>
+
+                                <td>
+
+                                    {% if application.status == 'pending' %}
+
+                                        <span class="badge badge-pending">
+                                            Pending
+                                        </span>
+
+                                    {% elif application.status == 'approved' %}
+
+                                        <span class="badge badge-approved">
+                                            Approved
+                                        </span>
+
+                                    {% elif application.status == 'rejected' %}
+
+                                        <span class="badge badge-rejected">
+                                            Rejected
+                                        </span>
+
+                                    {% elif application.status == 'under_review' %}
+
+                                        <span class="badge badge-review">
+                                            Under Review
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge">
+                                            {{ application.status|capitalize }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {{ application.application_date }}
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <i class="fas fa-file-circle-xmark"></i>
+
+                        <p>
+                            You have not submitted any loan applications yet.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- Risk Overview -->
+
+            <div class="risk-card">
+
+                <h2>
+                    Risk Overview
+                </h2>
+
+
+                {% if risk %}
+
+                    <div class="risk-circle">
+
+                        <div class="risk-inner">
+
+                            <strong>
+                                {{ risk.overall_score }}%
+                            </strong>
+
+                            <span>
+                                Risk Score
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="risk-description">
+
+                        Your latest risk assessment score is
+                        <strong>
+                            {{ risk.overall_score }}%
+                        </strong>.
+
+                    </p>
+
+                    <br>
+
+                    <a href="{{ url_for('assessment') }}"
+                       class="btn btn-primary">
+
+                        <i class="fas fa-chart-line"></i>
+
+                        View Assessment
+
+                    </a>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <i class="fas fa-chart-pie"></i>
+
+                        <p>
+                            No risk assessment available yet.
+                        </p>
+
+                    </div>
+
+
+                    <a href="{{ url_for('assessment') }}"
+                       class="btn btn-primary">
+
+                        <i class="fas fa-play"></i>
+
+                        Start Assessment
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             QUICK SERVICES
+        ====================================================== -->
+
+        <h2 class="section-title">
+            Quick Services
+        </h2>
+
+
+        <div class="services-grid">
+
+
+            <a href="{{ url_for('loan_apply') }}"
+               class="service-card">
+
+                <div class="service-icon">
+
+                    <i class="fas fa-hand-holding-dollar"></i>
+
+                </div>
+
+                <h3>
+                    Apply for Loan
+                </h3>
+
+                <p>
+                    Submit a new loan application and track its progress.
+                </p>
+
+            </a>
+
+
+
+            <a href="{{ url_for('assessment') }}"
+               class="service-card">
+
+                <div class="service-icon">
+
+                    <i class="fas fa-chart-column"></i>
+
+                </div>
+
+                <h3>
+                    Risk Assessment
+                </h3>
+
+                <p>
+                    Evaluate your financial and climate-related risk.
+                </p>
+
+            </a>
+
+
+
+            <a href="{{ url_for('recommendations') }}"
+               class="service-card">
+
+                <div class="service-icon">
+
+                    <i class="fas fa-robot"></i>
+
+                </div>
+
+                <h3>
+                    Recommendations
+                </h3>
+
+                <p>
+                    Receive personalized financial and insurance recommendations.
+                </p>
+
+            </a>
+
+
+
+            <a href="{{ url_for('policies') }}"
+               class="service-card">
+
+                <div class="service-icon">
+
+                    <i class="fas fa-shield-heart"></i>
+
+                </div>
+
+                <h3>
+                    Insurance
+                </h3>
+
+                <p>
+                    Explore insurance products suitable for your needs.
+                </p>
+
+            </a>
+
+
+
+            <a href="{{ url_for('my_loans') }}"
+               class="service-card">
+
+                <div class="service-icon">
+
+                    <i class="fas fa-money-check"></i>
+
+                </div>
+
+                <h3>
+                    My Loans
+                </h3>
+
+                <p>
+                    View your approved and active loans.
+                </p>
+
+            </a>
+
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="service-card">
+
+                <div class="service-icon">
+
+                    <i class="fas fa-arrows-rotate"></i>
+
+                </div>
+
+                <h3>
+                    Dashboard
+                </h3>
+
+                <p>
+                    Refresh and view your latest financial information.
+                </p>
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             INFORMATION PANEL
+        ====================================================== -->
+
+        <div class="info-panel">
+
+            <div class="info-icon">
+
+                <i class="fas fa-lightbulb"></i>
+
+            </div>
+
+            <div>
+
+                <h3>
+                    How Your Loan Status Works
+                </h3>
+
+                <p>
+
+                    When you submit a new loan application, it starts as
+                    <strong>Pending</strong>. The bank reviews your application
+                    and can either <strong>Approve</strong> or
+                    <strong>Reject</strong> it. Your dashboard automatically
+                    displays the latest status and updates the corresponding
+                    application count.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/app.js', v='20260929-leaf-sidebar-1') }}"></script>
+</body>
+</html>

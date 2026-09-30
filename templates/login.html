@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login | Rafiki Mkombozi
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="text-center mb-4">
+
+            <div class="auth-logo">
+                ✦
+            </div>
+
+            <h2>
+                Welcome back
+            </h2>
+
+            <p>
+                Login to your Rafiki Mkombozi account.
+            </p>
+
+        </div>
+
+
+        <!-- Login Form -->
+        <form method="POST" action="{{ url_for('login') }}">
+
+            <div class="mb-3">
+                <label for="identifier">
+                    Email or phone number
+                </label>
+
+                <input
+                    type="text"
+                    id="identifier"
+                    name="identifier"
+                    class="form-control"
+                    placeholder="Enter your email or phone number"
+                    required
+                >
+            </div>
+
+            <div class="mb-2">
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <div class="auth-inline-row">
+                <a class="auth-inline-link" href="{{ url_for('forgot_password') }}">Forgot password?</a>
+            </div>
+
+
+            <!-- Login Button -->
+            <button
+                type="submit"
+                class="btn btn-primary w-100">
+
+                Login
+
+            </button>
+
+        </form>
+
+
+        <!-- Registration Link -->
+        <p class="text-center mt-4">
+
+            Don't have an account?
+
+            <a href="{{ url_for('register') }}">
+                Create one
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

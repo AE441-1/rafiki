@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Insurance Applications | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <span>POLICY MANAGEMENT</span>
+                <h1>Insurance applications</h1>
+                <p>Review customer applications before activating cover.</p>
+            </div>
+            <a href="{{ url_for('insurer_dashboard') }}" class="btn btn-outline-primary">Back to dashboard</a>
+        </div>
+
+        {% if applications %}
+        <div class="row g-4">
+            {% for application in applications %}
+            <div class="col-lg-6">
+                <article class="policy-card h-100">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <span class="policy-category">{{ application.category or "Insurance" }}</span>
+                            <h2 class="mt-2">{{ application.policy_name }}</h2>
+                        </div>
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6"><small class="text-muted">Applicant</small><div class="fw-semibold">{{ application.customer_name }}</div></div>
+                        <div class="col-sm-6"><small class="text-muted">Email</small><div>{{ application.email }}</div></div>
+                        <div class="col-sm-6"><small class="text-muted">Phone</small><div>{{ application.phone or "Not provided" }}</div></div>
+                        <div class="col-sm-6"><small class="text-muted">Applied</small><div>{{ application.created_at }}</div></div>
+                    </div>
+
+                    <p>Premium: <strong>TZS {{ "{:,.0f}".format(application.premium|float) }}</strong> · {{ application.duration }}</p>
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <form method="POST" action="{{ url_for('insurer_policy_application_decision', application_id=application.id) }}">
+                            <input type="hidden" name="decision" value="approve">
+                            <button type="submit" class="btn btn-success">Approve and activate</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('insurer_policy_application_decision', application_id=application.id) }}" onsubmit="return confirm('Decline this insurance application?');">
+                            <input type="hidden" name="decision" value="reject">
+                            <button type="submit" class="btn btn-outline-danger">Decline</button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>No pending insurance applications</h2>
+            <p>New customer applications will appear here for review.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

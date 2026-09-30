@@ -1,0 +1,2527 @@
+{% extends "base.html" %}
+
+{% block title %}
+Bank Dashboard | Rafiki Mkombozi
+{% endblock %}
+
+{% block content %}
+
+<section class="bank-dashboard">
+
+<div class="container py-4">
+
+    <!-- =====================================================
+         BANK HERO
+         ===================================================== -->
+
+    <div class="bank-hero">
+
+        <div class="hero-content">
+
+            <div class="portal-label">
+                <span class="live-dot"></span>
+                BANK PORTAL
+            </div>
+
+            <h1>
+                Welcome, {{ session.get("name", "Bank Officer") }}
+            </h1>
+
+            <p>
+                Manage customers, loan applications, approvals,
+                active loans and repayments from one connected
+                financial platform.
+            </p>
+
+        </div>
+
+
+        <div class="hero-actions">
+
+            <div class="platform-status">
+                <span class="status-dot"></span>
+                PLATFORM ONLINE
+            </div>
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="logout-btn"
+            >
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+         ===================================================== -->
+
+    <div class="row g-4 mb-5">
+
+        <!-- TOTAL CUSTOMERS -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-content">
+
+                    <span>TOTAL CUSTOMERS</span>
+
+                    <h2>
+                        {{ total_customers|default(0) }}
+                    </h2>
+
+                    <p>
+                        Registered customers
+                    </p>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card warning-card">
+
+                <div class="stat-content">
+
+                    <span>PENDING APPLICATIONS</span>
+
+                    <h2>
+                        {{ pending_loans|default(0) }}
+                    </h2>
+
+                    <p>
+                        Awaiting bank review
+                    </p>
+
+                </div>
+
+                <div class="stat-icon warning-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVED -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card success-card">
+
+                <div class="stat-content">
+
+                    <span>APPROVED LOANS</span>
+
+                    <h2>
+                        {{ approved_loans|default(0) }}
+                    </h2>
+
+                    <p>
+                        Approved applications
+                    </p>
+
+                </div>
+
+                <div class="stat-icon success-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-content">
+
+                    <span>ACTIVE LOANS</span>
+
+                    <h2>
+                        {{ active_loans|default(0) }}
+                    </h2>
+
+                    <p>
+                        Currently active loans
+                    </p>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LOAN PROCESSING STATUS
+         ===================================================== -->
+
+    <div class="section-heading">
+
+        <div>
+
+            <span>LOAN PROCESSING</span>
+
+            <h2>
+                Application Status
+            </h2>
+
+        </div>
+
+        <p>
+            Track the customer loan journey from application
+            to active financing.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4 mb-5">
+
+        <!-- PENDING -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="status-card">
+
+                <div class="status-number">
+                    01
+                </div>
+
+                <div class="status-icon pending-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+                <span class="status-label">
+                    PENDING
+                </span>
+
+                <h3>
+                    Awaiting Review
+                </h3>
+
+                <p>
+                    Customer has submitted an application
+                    waiting for bank assessment.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- UNDER REVIEW -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="status-card">
+
+                <div class="status-number">
+                    02
+                </div>
+
+                <div class="status-icon review-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <span class="status-label">
+                    UNDER REVIEW
+                </span>
+
+                <h3>
+                    Assessment
+                </h3>
+
+                <p>
+                    Bank staff are assessing the customer's
+                    financial and risk information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVED -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="status-card">
+
+                <div class="status-number">
+                    03
+                </div>
+
+                <div class="status-icon approved-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+
+                <span class="status-label">
+                    APPROVED
+                </span>
+
+                <h3>
+                    Loan Approved
+                </h3>
+
+                <p>
+                    Application has been approved and can
+                    proceed to disbursement.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="status-card">
+
+                <div class="status-number">
+                    04
+                </div>
+
+                <div class="status-icon active-icon">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+
+                <span class="status-label">
+                    ACTIVE
+                </span>
+
+                <h3>
+                    Active Loan
+                </h3>
+
+                <p>
+                    Loan has been disbursed and is currently
+                    active.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BANK OPERATIONS
+         ===================================================== -->
+
+    <div class="section-heading">
+
+        <div>
+
+            <span>BANK OPERATIONS</span>
+
+            <h2>
+                Financial Services
+            </h2>
+
+        </div>
+
+        <p>
+            Access the main banking operations.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4 mb-5">
+
+        <!-- CUSTOMERS -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="service-card">
+
+                <div class="service-top">
+
+                    <div class="service-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <span>01</span>
+
+                </div>
+
+                <small>
+                    CUSTOMER MANAGEMENT
+                </small>
+
+                <h3>
+                    Customers
+                </h3>
+
+                <p>
+                    View registered customers, financial
+                    information and risk profiles.
+                </p>
+
+                <a
+                    href="{{ url_for('bank_customers') }}"
+                    class="service-button"
+                >
+                    View Customers
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOAN APPLICATIONS -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="service-card">
+
+                <div class="service-top">
+
+                    <div class="service-icon">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+
+                    <span>02</span>
+
+                </div>
+
+                <small>
+                    LOAN PROCESSING
+                </small>
+
+                <h3>
+                    Loan Applications
+                </h3>
+
+                <p>
+                    Review pending, under-review, approved
+                    and rejected loan applications.
+                </p>
+
+                <a
+                    href="{{ url_for('bank_loan_applications') }}"
+                    class="service-button"
+                >
+                    Review Applications
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE LOANS -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="service-card">
+
+                <div class="service-top">
+
+                    <div class="service-icon">
+                        <i class="fa-solid fa-money-bill-transfer"></i>
+                    </div>
+
+                    <span>03</span>
+
+                </div>
+
+                <small>
+                    LOAN MANAGEMENT
+                </small>
+
+                <h3>
+                    Active Loans
+                </h3>
+
+                <p>
+                    Monitor approved and activated customer
+                    loans.
+                </p>
+
+                <a
+                    href="{{ url_for('bank_repayments') }}"
+                    class="service-button"
+                >
+                    Manage Loans
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- REPAYMENTS -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="service-card">
+
+                <div class="service-top">
+
+                    <div class="service-icon">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+
+                    <span>04</span>
+
+                </div>
+
+                <small>
+                    REPAYMENT MANAGEMENT
+                </small>
+
+                <h3>
+                    Repayments
+                </h3>
+
+                <p>
+                    Track customer repayments and monitor
+                    repayment activity.
+                </p>
+
+                <a
+                    href="{{ url_for('bank_repayments') }}"
+                    class="service-button"
+                >
+                    View Repayments
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- DISBURSEMENTS -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="service-card">
+
+                <div class="service-top">
+
+                    <div class="service-icon">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+
+                    <span>05</span>
+
+                </div>
+
+                <small>
+                    LOAN DISBURSEMENT
+                </small>
+
+                <h3>
+                    Disbursements
+                </h3>
+
+                <p>
+                    Process approved applications and activate
+                    customer loans.
+                </p>
+
+                <a
+                    href="{{ url_for('bank_loan_applications') }}"
+                    class="service-button"
+                >
+                    Manage Disbursements
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- REPORTS -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="service-card">
+
+                <div class="service-top">
+
+                    <div class="service-icon">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </div>
+
+                    <span>06</span>
+
+                </div>
+
+                <small>
+                    ANALYTICS
+                </small>
+
+                <h3>
+                    Bank Reports
+                </h3>
+
+                <p>
+                    Review loan portfolio, applications,
+                    repayments and customer activity.
+                </p>
+
+                <button
+                    type="button"
+                    class="service-button"
+                    disabled
+                >
+                    Coming Soon
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CREDIT & RISK INTELLIGENCE
+         ===================================================== -->
+
+    <div class="ai-section">
+
+        <div class="ai-header">
+
+            <div class="ai-title">
+
+                <div class="ai-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        CREDIT & RISK INTELLIGENCE
+                    </span>
+
+                    <h2>
+                        Financial Risk Analysis
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="ai-status">
+
+                <span></span>
+
+                RISK TOOLS ACTIVE
+
+            </div>
+
+        </div>
+
+
+        <p class="ai-description">
+
+            Use financial and climate-risk information to
+            support customer assessment and responsible
+            lending decisions.
+
+        </p>
+
+
+        <div class="row g-4">
+
+            <!-- CREDIT RISK -->
+            <div class="col-lg-4">
+
+                <div class="risk-card">
+
+                    <div class="risk-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+
+                    <div>
+
+                        <small>
+                            FINANCIAL INDICATOR
+                        </small>
+
+                        <h3>
+                            Credit Risk
+                        </h3>
+
+                        <p>
+                            Review customer financial information,
+                            loan history and repayment-related
+                            risk indicators.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLIMATE RISK -->
+            <div class="col-lg-4">
+
+                <div class="risk-card">
+
+                    <div class="risk-icon">
+                        <i class="fa-solid fa-cloud-sun"></i>
+                    </div>
+
+                    <div>
+
+                        <small>
+                            CLIMATE INDICATOR
+                        </small>
+
+                        <h3>
+                            Climate Risk
+                        </h3>
+
+                        <p>
+                            Consider drought, flood and rainfall
+                            risks that may affect customers.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- REPAYMENT RISK -->
+            <div class="col-lg-4">
+
+                <div class="risk-card">
+
+                    <div class="risk-icon">
+                        <i class="fa-solid fa-rotate"></i>
+                    </div>
+
+                    <div>
+
+                        <small>
+                            REPAYMENT INDICATOR
+                        </small>
+
+                        <h3>
+                            Repayment Risk
+                        </h3>
+
+                        <p>
+                            Monitor repayment patterns and
+                            identify customers requiring
+                            additional review.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AI NOTICE -->
+
+        <div class="ai-notice">
+
+            <div class="notice-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Decision Support
+                </strong>
+
+                <p>
+                    Risk information supports
+                    financial assessment. Final lending
+                    decisions remain subject to bank review,
+                    policies and applicable requirements.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECENT APPLICATIONS
+         ===================================================== -->
+
+    <div class="section-heading activity-heading">
+
+        <div>
+
+            <span>
+                LOAN ACTIVITY
+            </span>
+
+            <h2>
+                Recent Loan Applications
+            </h2>
+
+        </div>
+
+        <div class="activity-live">
+
+            <span></span>
+
+            LIVE
+
+        </div>
+
+    </div>
+
+
+    <div class="activity-panel">
+
+        <div class="table-responsive">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>APPLICATION</th>
+                        <th>CUSTOMER</th>
+                        <th>AMOUNT</th>
+                        <th>DURATION</th>
+                        <th>STATUS</th>
+                        <th>DATE</th>
+                        <th>ACTION</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% if recent_applications %}
+
+                        {% for application in recent_applications %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    #{{ application.id }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ application.customer_name }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                TZS
+                                {{ "{:,.2f}".format(application.amount) }}
+                            </td>
+
+                            <td>
+                                {{ application.duration_months }}
+                                months
+                            </td>
+
+                            <td>
+
+                                {% if application.status == "pending" %}
+
+                                    <span class="status-badge pending-badge">
+                                        Pending
+                                    </span>
+
+                                {% elif application.status == "under_review" %}
+
+                                    <span class="status-badge review-badge">
+                                        Under Review
+                                    </span>
+
+                                {% elif application.status == "approved" %}
+
+                                    <span class="status-badge approved-badge">
+                                        Approved
+                                    </span>
+
+                                {% elif application.status == "rejected" %}
+
+                                    <span class="status-badge rejected-badge">
+                                        Rejected
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge">
+                                        {{ application.status|title }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <small>
+                                    {{ application.application_date }}
+                                </small>
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'review_loan',
+                                        application_id=application.id
+                                    ) }}"
+                                    class="review-btn"
+                                >
+
+                                    Review
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="7">
+
+                                <div class="empty-state">
+
+                                    <div class="empty-icon">
+                                        <i class="fa-solid fa-inbox"></i>
+                                    </div>
+
+                                    <strong>
+                                        No loan applications yet
+                                    </strong>
+
+                                    <span>
+                                        Customer loan applications
+                                        will appear here automatically.
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+         ===================================================== -->
+
+    <div class="quick-actions">
+
+        <div>
+
+            <span>
+                QUICK ACCESS
+            </span>
+
+            <h3>
+                Banking Operations
+            </h3>
+
+        </div>
+
+
+        <div class="quick-buttons">
+
+            <a
+                href="{{ url_for('bank_loan_applications') }}"
+                class="quick-btn primary"
+            >
+                <i class="fa-solid fa-file-invoice"></i>
+                Review Applications
+            </a>
+
+
+            <a
+                href="{{ url_for('bank_customers') }}"
+                class="quick-btn"
+            >
+                <i class="fa-solid fa-users"></i>
+                View Customers
+            </a>
+
+
+            <a
+                href="{{ url_for('bank_repayments') }}"
+                class="quick-btn"
+            >
+                <i class="fa-solid fa-credit-card"></i>
+                Repayments
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+/* =========================================================
+   IMPORTANT: LET BODY BACKGROUND IMAGE SHOW
+   ========================================================= */
+
+html,
+body {
+    min-height: 100%;
+}
+
+
+/*
+   The page itself must NOT have a solid background.
+*/
+.bank-dashboard {
+
+    min-height: 100vh;
+
+    padding: 30px 0 70px;
+
+    color: #e8f4f1;
+
+    background: transparent !important;
+
+}
+
+
+/*
+   Bootstrap containers should also remain transparent.
+*/
+.bank-dashboard .container,
+.bank-dashboard .container-fluid {
+
+    background: transparent !important;
+
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.bank-hero {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 35px;
+
+    margin-bottom: 30px;
+
+    border: 1px solid rgba(22,160,133,.25);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(11,42,40,.82),
+            rgba(5,21,21,.78)
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.28);
+
+    backdrop-filter: blur(8px);
+
+    -webkit-backdrop-filter: blur(8px);
+
+}
+
+
+.portal-label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 13px;
+
+    color: #35d39a;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+
+}
+
+
+.live-dot,
+.status-dot,
+.ai-status span,
+.activity-live span {
+
+    width: 7px;
+
+    height: 7px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+
+    background: #35d39a;
+
+    box-shadow:
+        0 0 10px rgba(53,211,154,.7);
+
+}
+
+
+.bank-hero h1 {
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: clamp(28px,4vw,40px);
+
+    font-weight: 800;
+
+}
+
+
+.bank-hero p {
+
+    max-width: 700px;
+
+    margin: 0;
+
+    color: #b0c3bf;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+
+.hero-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+}
+
+
+.platform-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #91aaa5;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+
+.logout-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    border: 1px solid rgba(239,107,115,.25);
+
+    border-radius: 10px;
+
+    color: #ef8b91;
+
+    background: rgba(239,107,115,.06);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.stat-card,
+.status-card,
+.service-card {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,34,34,.82),
+            rgba(6,21,21,.78)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.25);
+
+    backdrop-filter: blur(8px);
+
+    -webkit-backdrop-filter: blur(8px);
+
+}
+
+
+.stat-card {
+
+    position: relative;
+
+    height: 100%;
+
+    min-height: 175px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 24px;
+
+    overflow: hidden;
+
+    border-radius: 17px;
+
+    transition: .2s ease;
+
+}
+
+
+.stat-card:hover,
+.status-card:hover,
+.service-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(22,160,133,.35);
+
+}
+
+
+.stat-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 3px;
+
+    height: 100%;
+
+    background: #16a085;
+
+}
+
+
+.warning-card::before {
+    background: #e5ad46;
+}
+
+
+.success-card::before {
+    background: #35d39a;
+}
+
+
+.stat-content span {
+
+    display: block;
+
+    margin-bottom: 14px;
+
+    color: #91aaa5;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+
+}
+
+
+.stat-content h2 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 32px;
+
+    font-weight: 800;
+
+}
+
+
+.stat-content p {
+
+    margin: 18px 0 0;
+
+    color: #91aaa5;
+
+    font-size: 11px;
+
+}
+
+
+.stat-icon {
+
+    width: 44px;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    color: #32d39b;
+
+    background:
+        rgba(22,160,133,.10);
+
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.section-heading {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin: 10px 0 25px;
+
+}
+
+
+.section-heading > div > span {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #27c995;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.7px;
+
+}
+
+
+.section-heading h2 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+}
+
+
+.section-heading > p {
+
+    margin: 0;
+
+    color: #9bb0ac;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   STATUS CARDS
+   ========================================================= */
+
+.status-card {
+
+    position: relative;
+
+    height: 100%;
+
+    min-height: 260px;
+
+    padding: 25px;
+
+    overflow: hidden;
+
+    border-radius: 17px;
+
+    transition: .2s ease;
+
+}
+
+
+.status-number {
+
+    position: absolute;
+
+    top: 18px;
+
+    right: 20px;
+
+    color: #54716c;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+.status-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 22px;
+
+    border-radius: 13px;
+
+}
+
+
+.pending-icon {
+
+    color: #e5ad46;
+
+    background:
+        rgba(229,173,70,.08);
+
+}
+
+
+.review-icon {
+
+    color: #55c8df;
+
+    background:
+        rgba(85,200,223,.08);
+
+}
+
+
+.approved-icon {
+
+    color: #35d39a;
+
+    background:
+        rgba(53,211,154,.08);
+
+}
+
+
+.active-icon {
+
+    color: #5ca8ff;
+
+    background:
+        rgba(92,168,255,.08);
+
+}
+
+
+.status-label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #2dcf99;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+
+}
+
+
+.status-card h3 {
+
+    margin: 0 0 10px;
+
+    color: white;
+
+    font-size: 18px;
+
+}
+
+
+.status-card p {
+
+    margin: 0;
+
+    color: #9bb0ac;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =========================================================
+   SERVICE CARDS
+   ========================================================= */
+
+.service-card {
+
+    height: 100%;
+
+    min-height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 25px;
+
+    border-radius: 17px;
+
+    transition: .2s ease;
+
+}
+
+
+.service-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+
+}
+
+
+.service-top > span {
+
+    color: #66827d;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+.service-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    color: #2ed39a;
+
+    background:
+        rgba(22,160,133,.09);
+
+}
+
+
+.service-card small {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #28c994;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+}
+
+
+.service-card h3 {
+
+    margin: 0 0 10px;
+
+    color: white;
+
+    font-size: 18px;
+
+}
+
+
+.service-card p {
+
+    margin: 0 0 24px;
+
+    color: #9bb0ac;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+
+}
+
+
+.service-button {
+
+    width: fit-content;
+
+    margin-top: auto;
+
+    padding: 10px 14px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    border:
+        1px solid rgba(22,160,133,.25);
+
+    border-radius: 9px;
+
+    color: #2fd19a;
+
+    background:
+        rgba(22,160,133,.08);
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+
+.service-button:hover {
+
+    color: white;
+
+    background:
+        rgba(22,160,133,.18);
+
+}
+
+
+/* =========================================================
+   AI SECTION
+   ========================================================= */
+
+.ai-section {
+
+    margin: 60px 0;
+
+    padding: 32px;
+
+    border:
+        1px solid rgba(22,160,133,.25);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9,35,33,.82),
+            rgba(5,20,20,.78)
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.25);
+
+    backdrop-filter: blur(8px);
+
+    -webkit-backdrop-filter: blur(8px);
+
+}
+
+
+.ai-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+}
+
+
+.ai-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 17px;
+
+}
+
+
+.ai-icon {
+
+    width: 54px;
+
+    height: 54px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a085,
+            #0f766e
+        );
+
+}
+
+
+.ai-title span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #29ce98;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.ai-title h2 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 23px;
+
+}
+
+
+.ai-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    color: #37d69a;
+
+    background:
+        rgba(53,211,154,.07);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+}
+
+
+.ai-description {
+
+    max-width: 750px;
+
+    margin: 18px 0 25px;
+
+    color: #9bb0ac;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+
+.risk-card {
+
+    height: 100%;
+
+    display: flex;
+
+    gap: 16px;
+
+    padding: 22px;
+
+    border:
+        1px solid rgba(255,255,255,.09);
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.035);
+
+}
+
+
+.risk-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    color: #2dd19a;
+
+    background:
+        rgba(22,160,133,.10);
+
+}
+
+
+.risk-card small {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #75918b;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+}
+
+
+.risk-card h3 {
+
+    margin: 0 0 8px;
+
+    color: white;
+
+    font-size: 16px;
+
+}
+
+
+.risk-card p {
+
+    margin: 0;
+
+    color: #9bb0ac;
+
+    font-size: 11px;
+
+    line-height: 1.65;
+
+}
+
+
+.ai-notice {
+
+    display: flex;
+
+    gap: 14px;
+
+    margin-top: 24px;
+
+    padding: 17px;
+
+    border:
+        1px solid rgba(22,160,133,.18);
+
+    border-radius: 13px;
+
+    background:
+        rgba(22,160,133,.06);
+
+}
+
+
+.notice-icon {
+
+    color: #2dd19a;
+
+}
+
+
+.ai-notice strong {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #dce8e5;
+
+    font-size: 12px;
+
+}
+
+
+.ai-notice p {
+
+    margin: 0;
+
+    color: #9bb0ac;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   ACTIVITY TABLE
+   ========================================================= */
+
+.activity-heading {
+
+    margin-top: 10px;
+
+}
+
+
+.activity-live {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #35d39a;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+}
+
+
+.activity-panel {
+
+    overflow: hidden;
+
+    margin-bottom: 40px;
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    border-radius: 17px;
+
+    background:
+        rgba(7,23,23,.82);
+
+    backdrop-filter: blur(8px);
+
+}
+
+
+.activity-panel table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+
+.activity-panel th {
+
+    padding: 15px 20px;
+
+    color: #819b96;
+
+    background:
+        rgba(255,255,255,.035);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+    text-align: left;
+
+}
+
+
+.activity-panel td {
+
+    padding: 16px 20px;
+
+    color: #c2d2cf;
+
+    background:
+        rgba(7,23,23,.70);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.06);
+
+    font-size: 12px;
+
+}
+
+
+.activity-panel td strong {
+
+    color: #e4efec;
+
+}
+
+
+.activity-panel td small {
+
+    color: #819b96;
+
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+}
+
+
+.pending-badge {
+
+    color: #e5ad46;
+
+    background:
+        rgba(229,173,70,.10);
+
+}
+
+
+.review-badge {
+
+    color: #55c8df;
+
+    background:
+        rgba(85,200,223,.10);
+
+}
+
+
+.approved-badge {
+
+    color: #35d39a;
+
+    background:
+        rgba(53,211,154,.10);
+
+}
+
+
+.rejected-badge {
+
+    color: #ef8b91;
+
+    background:
+        rgba(239,107,115,.10);
+
+}
+
+
+/* =========================================================
+   REVIEW BUTTON
+   ========================================================= */
+
+.review-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border:
+        1px solid rgba(22,160,133,.25);
+
+    border-radius: 8px;
+
+    color: #2fd19a;
+
+    background:
+        rgba(22,160,133,.07);
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+
+    min-height: 190px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    text-align: center;
+
+}
+
+
+.empty-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 8px;
+
+    border-radius: 50%;
+
+    color: #2dd19a;
+
+    background:
+        rgba(22,160,133,.08);
+
+}
+
+
+.empty-state strong {
+
+    color: #dce8e5;
+
+    font-size: 13px;
+
+}
+
+
+.empty-state span {
+
+    color: #819b96;
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.quick-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-top: 20px;
+
+    padding: 25px;
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    border-radius: 17px;
+
+    background:
+        rgba(12,34,34,.80);
+
+    backdrop-filter: blur(8px);
+
+}
+
+
+.quick-actions > div:first-child span {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #28c994;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+
+}
+
+
+.quick-actions h3 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 18px;
+
+}
+
+
+.quick-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+}
+
+
+.quick-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 14px;
+
+    border:
+        1px solid rgba(22,160,133,.25);
+
+    border-radius: 9px;
+
+    color: #2fd19a;
+
+    background:
+        rgba(22,160,133,.06);
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+.quick-btn.primary {
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a085,
+            #0f766e
+        );
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .bank-hero {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .hero-actions {
+
+        width: 100%;
+
+        justify-content: space-between;
+
+    }
+
+
+    .ai-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .quick-actions {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .bank-dashboard {
+
+        padding-top: 20px;
+
+    }
+
+
+    .bank-hero {
+
+        padding: 24px;
+
+    }
+
+
+    .bank-hero h1 {
+
+        font-size: 28px;
+
+    }
+
+
+    .hero-actions {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .ai-section {
+
+        padding: 22px;
+
+    }
+
+
+    .section-heading {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .quick-buttons {
+
+        width: 100%;
+
+        flex-direction: column;
+
+    }
+
+
+    .quick-btn {
+
+        width: 100%;
+
+        justify-content: center;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}

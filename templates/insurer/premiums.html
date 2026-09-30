@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Premium Management | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <span>PREMIUMS</span>
+                <h1>Premium management</h1>
+                <p>Set product premiums and review the estimated value of active cover.</p>
+            </div>
+            <a href="{{ url_for('insurer_dashboard') }}" class="btn btn-outline-primary">Back to dashboard</a>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6"><div class="metric-card h-100"><span>ACTIVE POLICIES</span><strong>{{ active_policy_count }}</strong></div></div>
+            <div class="col-md-6"><div class="metric-card h-100"><span>ESTIMATED PREMIUM VALUE OF ACTIVE COVER</span><strong>TZS {{ "{:,.2f}".format(expected_active_premiums) }}</strong><small class="d-block text-muted mt-2">Based on each active policy's current product premium; this is not a record of payments received.</small></div></div>
+        </div>
+
+        {% if products %}
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-xl-6">
+                <article class="policy-card h-100">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div><span class="policy-category">{{ product.category or "Insurance" }}</span><h2 class="mt-2">{{ product.name }}</h2></div>
+                        <span class="badge bg-primary">{{ product.active_policy_count }} active cover(s)</span>
+                    </div>
+                    <p>Current premium: <strong>TZS {{ "{:,.2f}".format(product.premium|float) }}</strong> · {{ product.duration }}</p>
+                    <form method="POST" action="{{ url_for('insurer_premiums') }}" class="row g-3 align-items-end">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <div class="col-sm-8"><label class="form-label" for="premium-{{ product.id }}">Update quoted premium (TZS)</label><input class="form-control" id="premium-{{ product.id }}" name="premium" type="number" min="0" step="0.01" value="{{ product.premium }}" required></div>
+                        <div class="col-sm-4"><button class="btn btn-primary w-100" type="submit">Save premium</button></div>
+                    </form>
+                    <small class="d-block text-muted mt-3">Changes update this product's current price. Active-cover estimates use the current price; payments are not recorded here.</small>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state"><h2>No products available</h2><p>Create an insurance product before setting its premium.</p><a class="btn btn-primary" href="{{ url_for('insurer_products') }}">Manage products</a></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

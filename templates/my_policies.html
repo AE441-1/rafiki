@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}My Insurance | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <span>MY COVER</span>
+                <h1>My insurance policies</h1>
+                <p>Track your applications and current insurance cover.</p>
+            </div>
+            <a href="{{ url_for('policies') }}" class="btn btn-primary">Browse insurance</a>
+        </div>
+
+        {% if policies %}
+        <div class="row g-4">
+            {% for policy in policies %}
+            <div class="col-lg-6">
+                <article class="policy-card h-100">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <span class="policy-category">{{ policy.category or "Insurance" }}</span>
+                            <h2 class="mt-2">{{ policy.name }}</h2>
+                        </div>
+                        {% if policy.status == "active" %}
+                            <span class="badge bg-success">Active</span>
+                        {% elif policy.status == "pending" %}
+                            <span class="badge bg-warning text-dark">Pending review</span>
+                        {% elif policy.status == "rejected" %}
+                            <span class="badge bg-danger">Declined</span>
+                        {% elif policy.status == "expired" %}
+                            <span class="badge bg-secondary">Expired</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ policy.status|capitalize }}</span>
+                        {% endif %}
+                    </div>
+                    <p>{{ policy.coverage }}</p>
+                    <div class="policy-footer">
+                        <strong>TZS {{ "{:,.0f}".format(policy.premium|float) }}</strong>
+                        <span>{{ policy.duration }}</span>
+                    </div>
+                    {% if policy.status == "pending" %}
+                        <p class="small-text mt-3 mb-0">Your application has been sent to the insurer. Cover starts only after approval.</p>
+                    {% elif policy.status == "active" %}
+                        <p class="small-text mt-3 mb-0">
+                            Cover period: {{ policy.start_date or "Not started" }}
+                            {% if policy.end_date %} — {{ policy.end_date }}{% endif %}
+                        </p>
+                    {% elif policy.status == "rejected" %}
+                        <p class="small-text mt-3 mb-0">The insurer declined this application. You can apply again or choose another product.</p>
+                    {% endif %}
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>No insurance applications yet</h2>
+            <p>Browse available products and submit an application to get started.</p>
+            <a href="{{ url_for('policies') }}" class="btn btn-primary">Browse insurance</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

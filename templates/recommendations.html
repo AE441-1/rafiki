@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}
+Recommendations | Rafiki Mkombozi
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <div class="container">
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <span>
+                    PROTECTION RECOMMENDATIONS
+                </span>
+
+                <h1>
+                    Protection that may fit your risk
+                </h1>
+
+                <p>
+                    Rafiki has analyzed your profile and
+                    identified potentially relevant protection.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% if climate %}
+        <section class="dashboard-panel climate-results mb-4" aria-labelledby="climate-results-title">
+            <div class="climate-results-heading">
+                <div>
+                    <span class="policy-category">LOCATION-BASED CLIMATE ASSESSMENT</span>
+                    <h2 id="climate-results-title" class="mt-2">Climate risks at your location</h2>
+                    <p class="climate-location-address">{{ climate.location_address }}</p>
+                </div>
+                <small class="climate-coordinates">Coordinates: {{ "%.5f"|format(climate.latitude|float) }}, {{ "%.5f"|format(climate.longitude|float) }}</small>
+            </div>
+            <div class="climate-risk-metrics">
+                <div class="climate-score-card"><span>DROUGHT RISK</span><strong>{{ climate.drought_score }}%</strong></div>
+                <div class="climate-score-card"><span>FLOOD RISK</span><strong>{{ climate.flood_score }}%</strong></div>
+                <div class="climate-score-card"><span>RAINFALL RISK</span><strong>{{ climate.rainfall_score }}%</strong></div>
+                <div class="climate-score-card"><span>OVERALL RISK</span><strong>{{ climate.overall_score }}%</strong></div>
+                <div class="climate-score-card"><span>PEST PRESSURE</span><strong>{{ climate.pest_pressure_score }}%</strong></div>
+            </div>
+
+            <div class="climate-visual-grid" aria-label="Climate risk pictures">
+                <div class="climate-visual-card drought-visual">
+                    <div class="climate-visual-art"><i class="fas fa-sun"></i></div>
+                    <div><strong>Drought</strong><span>Water stress</span></div>
+                </div>
+                <div class="climate-visual-card rainfall-visual">
+                    <div class="climate-visual-art"><i class="fas fa-cloud-rain"></i></div>
+                    <div><strong>Rainfall</strong><span>Heavy rain exposure</span></div>
+                </div>
+                <div class="climate-visual-card flood-visual">
+                    <div class="climate-visual-art"><i class="fas fa-water"></i></div>
+                    <div><strong>Flood</strong><span>Flood exposure</span></div>
+                </div>
+                <div class="climate-visual-card pest-visual">
+                    <div class="climate-visual-art"><i class="fas fa-bug"></i></div>
+                    <div><strong>Pest pressure</strong><span>Crop health pressure</span></div>
+                </div>
+            </div>
+
+            <section class="climate-simulator" id="climate-simulator" aria-labelledby="simulator-title"
+                     data-drought="{{ climate.drought_score|float }}"
+                     data-rainfall="{{ climate.rainfall_score|float }}"
+                     data-flood="{{ climate.flood_score|float }}"
+                     data-pest="{{ climate.pest_pressure_score|float }}">
+                <div class="simulator-heading">
+                    <div>
+                        <span class="policy-category">LIVE CLIMATE SIMULATOR</span>
+                        <h3 id="simulator-title">Explore your risk response</h3>
+                        <p>Adjust an indicator to see how the recommended actions change.</p>
+                    </div>
+                    <div class="simulator-overall"><span>Simulated overall</span><strong id="simulator-overall">0%</strong></div>
+                </div>
+
+                <div class="simulator-layout">
+                    <div class="simulator-controls">
+                        <label class="simulator-control drought-control"><span><i class="fas fa-sun"></i>Drought</span><output id="drought-output">0%</output></label>
+                        <input type="range" id="drought-range" min="0" max="100" step="1">
+                        <label class="simulator-control rainfall-control"><span><i class="fas fa-cloud-rain"></i>Rainfall</span><output id="rainfall-output">0%</output></label>
+                        <input type="range" id="rainfall-range" min="0" max="100" step="1">
+                        <label class="simulator-control flood-control"><span><i class="fas fa-water"></i>Flood</span><output id="flood-output">0%</output></label>
+                        <input type="range" id="flood-range" min="0" max="100" step="1">
+                        <label class="simulator-control pest-control"><span><i class="fas fa-bug"></i>Pest pressure</span><output id="pest-output">0%</output></label>
+                        <input type="range" id="pest-range" min="0" max="100" step="1">
+                    </div>
+
+                    <div class="simulator-output">
+                        <h4>Recommended response</h4>
+                        <ul id="simulator-recommendations"></ul>
+                    </div>
+                </div>
+            </section>
+            <div class="climate-suggested-actions">
+                <h3 class="h5">Suggested actions</h3>
+                <ul class="mb-0">
+                    {% if climate.drought_score >= 60 %}<li>Review water conservation and drought-resilient crop practices for this season.</li>{% endif %}
+                    {% if climate.flood_score >= 60 %}<li>Check drainage and protect crops, equipment, and stored goods from heavy rain or flooding.</li>{% endif %}
+                    {% if climate.rainfall_score >= 60 %}<li>Monitor local rainfall and adjust planting, storage, and field work plans.</li>{% endif %}
+                    {% if climate.pest_pressure_score >= 60 %}<li>Scout crops for pests or disease and consult an agricultural extension officer before choosing pest control. Avoid blanket pesticide use.</li>{% endif %}
+                    {% if climate.drought_score < 60 and climate.flood_score < 60 and climate.rainfall_score < 60 and climate.pest_pressure_score < 60 %}<li>Current indicators are lower; continue monitoring local conditions and review cover options periodically.</li>{% endif %}
+                </ul>
+            </div>
+            <p class="small-text climate-disclaimer">These are prototype indicators calculated from recent historical climate data, not a forecast. Pest pressure combines warm/wet days and heavy-rain days; it is a crop pest/disease proxy and does not measure pesticide use, residue, or human exposure.</p>
+        </section>
+        {% endif %}
+
+
+        {% if recommendations %}
+
+        <div class="row g-4">
+
+            {% for item in recommendations %}
+
+            <div class="col-md-6">
+
+                <div class="policy-card">
+
+                    <div class="policy-top">
+
+                        <span class="policy-category">
+                            {{ item.category }}
+                        </span>
+
+                        <span class="relevance
+                            {% if item.relevance == 'HIGH' %}
+                                high
+                            {% elif item.relevance == 'MEDIUM' %}
+                                medium
+                            {% else %}
+                                low
+                            {% endif %}
+                        ">
+
+                            {{ item.relevance }}
+
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        {{ item.name }}
+                    </h2>
+
+
+                    <div class="recommendation-score">
+
+                        <span>
+                            Risk relevance
+                        </span>
+
+                        <strong>
+                            {{ item.risk_score }}%
+                        </strong>
+
+                    </div>
+
+
+                    <p>
+                        {{ item.reason }}
+                    </p>
+
+
+                    <hr>
+
+
+                    <p class="small-text">
+                        {{ item.coverage }}
+                    </p>
+
+
+                    <div class="policy-footer">
+
+                        <strong>
+                            TZS {{ "{:,.0f}".format(item.premium) }}
+                        </strong>
+
+                        <span>
+                            {{ item.duration }}
+                        </span>
+
+                    </div>
+
+
+                    <form method="POST" action="{{ url_for('apply_for_policy', policy_id=item.product_id) }}" class="mt-3">
+                        <button type="submit" class="btn btn-primary w-100">Apply for this insurance</button>
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <h2>
+                No matching active insurance products
+            </h2>
+
+            <p>
+                Your climate assessment is available above, but insurers have not published an active product matching it yet.
+            </p>
+
+            <a href="{{ url_for('policies') }}" class="btn btn-outline-primary mb-3">Browse available insurance</a>
+
+            <p>Check back later or contact an insurer for available cover.</p>
+
+            <a
+            href="{{ url_for('assessment') }}"
+            class="btn btn-primary">
+
+                Start Assessment
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<style>
+    .climate-visual-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+    .climate-visual-card { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 12px; border: 1px solid var(--border); border-radius: 14px; background: rgba(13, 32, 32, .58); }
+    .climate-visual-art { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto; border-radius: 12px; font-size: 18px; }
+    .climate-visual-card strong, .climate-visual-card span { display: block; overflow-wrap: anywhere; }
+    .climate-visual-card strong { color: var(--text); font-size: 13px; }
+    .climate-visual-card span { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .drought-visual .climate-visual-art { color: #f8bd61; background: rgba(248, 189, 97, .16); }
+    .rainfall-visual .climate-visual-art { color: #74c9f4; background: rgba(116, 201, 244, .16); }
+    .flood-visual .climate-visual-art { color: #6aa8ff; background: rgba(106, 168, 255, .16); }
+    .pest-visual .climate-visual-art { color: #c5db76; background: rgba(197, 219, 118, .16); }
+    .climate-simulator { margin-top: 22px; padding: 20px; border: 1px solid rgba(86, 200, 170, .28); border-radius: 18px; background: linear-gradient(135deg, rgba(18, 59, 54, .92), rgba(10, 30, 32, .86)); }
+    .simulator-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .simulator-heading h3 { margin: 7px 0 4px; color: var(--text); }
+    .simulator-heading p { color: var(--muted); margin: 0; }
+    .simulator-overall { min-width: 125px; padding: 12px 14px; border-radius: 12px; text-align: right; background: rgba(255,255,255,.08); }
+    .simulator-overall span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+    .simulator-overall strong { display: block; margin-top: 5px; color: #73dfc0; font-size: 26px; }
+    .simulator-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 22px; }
+    .simulator-controls { display: grid; gap: 7px; }
+    .simulator-control { display: flex; align-items: center; justify-content: space-between; color: var(--text); font-size: 13px; font-weight: 700; margin-top: 7px; }
+    .simulator-control i { width: 20px; color: #73dfc0; }
+    .simulator-control output { color: #73dfc0; }
+    .simulator-controls input[type="range"] { width: 100%; accent-color: #35b995; }
+    .simulator-output { padding: 16px; border-radius: 14px; background: rgba(0, 0, 0, .17); }
+    .simulator-output h4 { color: var(--text); font-size: 15px; margin-bottom: 12px; }
+    #simulator-recommendations { margin: 0; padding-left: 18px; color: var(--muted); }
+    #simulator-recommendations li { line-height: 1.5; margin-bottom: 8px; }
+    @media (max-width: 800px) { .climate-visual-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .simulator-layout { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) { .climate-visual-grid { grid-template-columns: 1fr; } .simulator-heading { flex-direction: column; } .simulator-overall { width: 100%; text-align: left; } }
+</style>
+
+<script>
+    (() => {
+        const simulator = document.getElementById('climate-simulator');
+        if (!simulator) return;
+
+        const names = ['drought', 'rainfall', 'flood', 'pest'];
+        const controls = names.map((name) => ({
+            name,
+            range: document.getElementById(`${name}-range`),
+            output: document.getElementById(`${name}-output`)
+        }));
+        const overall = document.getElementById('simulator-overall');
+        const list = document.getElementById('simulator-recommendations');
+
+        controls.forEach(({ name, range }) => { range.value = simulator.dataset[name]; });
+
+        function updateSimulator() {
+            const values = Object.fromEntries(controls.map(({ name, range, output }) => {
+                const value = Number(range.value);
+                output.value = `${value}%`;
+                output.textContent = `${value}%`;
+                return [name, value];
+            }));
+            const simulatedOverall = Math.round((values.drought + values.rainfall + values.flood) / 3);
+            overall.textContent = `${simulatedOverall}%`;
+            const responses = [];
+            if (values.drought >= 60) responses.push('Prioritize water conservation and drought-resilient crop practices.');
+            if (values.rainfall >= 60) responses.push('Adjust planting and field work plans around heavy rainfall periods.');
+            if (values.flood >= 60) responses.push('Improve drainage and move equipment or stored goods above flood level.');
+            if (values.pest >= 60) responses.push('Scout crops regularly for pests or disease and seek extension guidance before treatment.');
+            if (!responses.length) responses.push('Continue monitoring local conditions and review protection options periodically.');
+            list.innerHTML = responses.map((response) => `<li>${response}</li>`).join('');
+        }
+
+        controls.forEach(({ range }) => range.addEventListener('input', updateSimulator));
+        updateSimulator();
+    })();
+</script>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Claims Management | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <span>CLAIMS</span>
+                <h1>Claims management</h1>
+                <p>Review submitted claims and update their processing status.</p>
+            </div>
+            <a href="{{ url_for('insurer_dashboard') }}" class="btn btn-outline-primary">Back to dashboard</a>
+        </div>
+
+        {% if claims %}
+        <div class="dashboard-panel">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead><tr><th>Claim</th><th>Customer</th><th>Policy</th><th>Claim amount</th><th>Description</th><th>Submitted</th><th>Status</th><th>Update</th></tr></thead>
+                    <tbody>
+                    {% for claim in claims %}
+                        <tr>
+                            <td>#{{ claim.id }}</td>
+                            <td><strong>{{ claim.customer_name }}</strong><small class="d-block text-muted">{{ claim.email }}</small></td>
+                            <td>{{ claim.policy_name }}</td>
+                            <td>{% if claim.claim_amount is not none %}TZS {{ "{:,.2f}".format(claim.claim_amount|float) }}{% else %}—{% endif %}</td>
+                            <td class="claim-description">{{ claim.description or "No details provided" }}</td>
+                            <td>{{ claim.created_at }}</td>
+                            <td><span class="badge {% if claim.status in ['approved', 'paid'] %}bg-success{% elif claim.status == 'rejected' %}bg-danger{% elif claim.status == 'under_review' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ claim.status|replace('_', ' ')|capitalize }}</span></td>
+                            <td>
+                                <form method="POST" action="{{ url_for('insurer_update_claim', claim_id=claim.id) }}" class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" name="status" aria-label="Claim status">
+                                        {% for status in ['submitted', 'under_review', 'approved', 'rejected', 'paid'] %}
+                                        <option value="{{ status }}" {% if claim.status == status %}selected{% endif %}>{{ status|replace('_', ' ')|capitalize }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state"><h2>No claims submitted</h2><p>Customer claims will appear here for assessment.</p></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

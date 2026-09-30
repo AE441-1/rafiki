@@ -1,0 +1,589 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" style="max-width: 1000px; margin: 35px auto;">
+
+    <!-- Header -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    ">
+
+        <div>
+            <h2 style="margin: 0;">Review Loan Application</h2>
+
+            <p style="color: #666; margin-top: 8px;">
+                Review the customer's loan request before making a decision.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('bank_loan_applications') }}"
+            style="
+                background: #343a40;
+                color: white;
+                padding: 10px 18px;
+                border-radius: 6px;
+                text-decoration: none;
+            "
+        >
+            ← Back to Applications
+        </a>
+
+    </div>
+
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div style="
+                    padding: 12px 15px;
+                    margin-bottom: 15px;
+                    border-radius: 6px;
+                    background: #f1f1f1;
+                ">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- Application Information -->
+    <div style="
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    ">
+
+        <h3 style="margin-top: 0; margin-bottom: 25px;">
+            Application #{{ application.id }}
+        </h3>
+
+
+        <!-- Customer Information -->
+        <h4 style="
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        ">
+            Customer Information
+        </h4>
+
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        ">
+
+            <div>
+                <small style="color: #777;">Full Name</small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.customer_name }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">Email</small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.email }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">Phone</small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.phone or "Not provided" }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">Location</small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.location or "Not provided" }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">Customer Type</small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.customer_type or "Not provided" }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">Crop / Business Type</small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.crop_type or application.business_type or "Not provided" }}
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Loan Information -->
+        <h4 style="
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        ">
+            Loan Information
+        </h4>
+
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        ">
+
+            <div>
+                <small style="color: #777;">
+                    Requested Amount
+                </small>
+
+                <div style="
+                    font-size: 22px;
+                    font-weight: bold;
+                    margin-top: 5px;
+                ">
+                    TZS {{ "{:,.2f}".format(application.amount) }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">
+                    Duration
+                </small>
+
+                <div style="
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-top: 5px;
+                ">
+                    {{ application.duration_months }} months
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">
+                    Purpose
+                </small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.purpose }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">
+                    Application Date
+                </small>
+
+                <div style="font-weight: bold; margin-top: 5px;">
+                    {{ application.application_date }}
+                </div>
+            </div>
+
+
+            <div>
+                <small style="color: #777;">
+                    Current Status
+                </small>
+
+                <div style="margin-top: 8px;">
+
+                    {% if application.status == "pending" %}
+
+                        <span style="
+                            background: #fff3cd;
+                            color: #856404;
+                            padding: 7px 12px;
+                            border-radius: 20px;
+                            font-size: 13px;
+                            font-weight: bold;
+                        ">
+                            Pending
+                        </span>
+
+                    {% elif application.status == "under_review" %}
+
+                        <span style="
+                            background: #cff4fc;
+                            color: #055160;
+                            padding: 7px 12px;
+                            border-radius: 20px;
+                            font-size: 13px;
+                            font-weight: bold;
+                        ">
+                            Under Review
+                        </span>
+
+                    {% elif application.status == "approved" %}
+
+                        <span style="
+                            background: #d1e7dd;
+                            color: #0f5132;
+                            padding: 7px 12px;
+                            border-radius: 20px;
+                            font-size: 13px;
+                            font-weight: bold;
+                        ">
+                            Approved
+                        </span>
+
+                    {% elif application.status == "rejected" %}
+
+                        <span style="
+                            background: #f8d7da;
+                            color: #842029;
+                            padding: 7px 12px;
+                            border-radius: 20px;
+                            font-size: 13px;
+                            font-weight: bold;
+                        ">
+                            Rejected
+                        </span>
+
+                    {% else %}
+
+                        {{ application.status }}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Risk Information -->
+        <h4 style="
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        ">
+            Risk Information
+        </h4>
+
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        ">
+
+            <div style="
+                background: #f8f9fa;
+                padding: 18px;
+                border-radius: 8px;
+                text-align: center;
+            ">
+
+                <small style="color: #777;">
+                    Overall Risk
+                </small>
+
+                <div style="
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-top: 8px;
+                ">
+                    {{ application.overall_risk or "N/A" }}
+                </div>
+
+            </div>
+
+
+            <div style="
+                background: #f8f9fa;
+                padding: 18px;
+                border-radius: 8px;
+                text-align: center;
+            ">
+
+                <small style="color: #777;">
+                    Drought Risk
+                </small>
+
+                <div style="
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-top: 8px;
+                ">
+                    {{ application.drought_risk or "N/A" }}
+                </div>
+
+            </div>
+
+
+            <div style="
+                background: #f8f9fa;
+                padding: 18px;
+                border-radius: 8px;
+                text-align: center;
+            ">
+
+                <small style="color: #777;">
+                    Flood Risk
+                </small>
+
+                <div style="
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-top: 8px;
+                ">
+                    {{ application.flood_risk or "N/A" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Decision Section -->
+        {% if application.status != "rejected" and application.status != "approved" %}
+
+        <div style="
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+        ">
+
+            <h4>
+                Make Decision
+            </h4>
+
+            <p style="color: #666;">
+                Select the appropriate action for this loan application.
+            </p>
+
+
+            <div style="
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-top: 20px;
+            ">
+
+                <!-- Under Review -->
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'review_loan',
+                        application_id=application.id
+                    ) }}"
+                >
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="review"
+                    >
+
+                    <button
+                        type="submit"
+                        style="
+                            background: #0dcaf0;
+                            color: #055160;
+                            border: none;
+                            padding: 12px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        "
+                    >
+                        Mark Under Review
+                    </button>
+
+                </form>
+
+
+                <!-- Approve -->
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'review_loan',
+                        application_id=application.id
+                    ) }}"
+                    onsubmit="return confirm(
+                        'Are you sure you want to approve this loan application?'
+                    );"
+                >
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="approve"
+                    >
+
+                    <button
+                        type="submit"
+                        style="
+                            background: #198754;
+                            color: white;
+                            border: none;
+                            padding: 12px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        "
+                    >
+                        ✓ Approve Loan
+                    </button>
+
+                </form>
+
+
+                <!-- Reject -->
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'review_loan',
+                        application_id=application.id
+                    ) }}"
+                    onsubmit="return confirm(
+                        'Are you sure you want to reject this loan application?'
+                    );"
+                >
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="reject"
+                    >
+
+                    <button
+                        type="submit"
+                        style="
+                            background: #dc3545;
+                            color: white;
+                            border: none;
+                            padding: 12px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        "
+                    >
+                        ✕ Reject Loan
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Disbursement -->
+        {% if application.status == "approved" %}
+
+        <div style="
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+            margin-top: 25px;
+        ">
+
+            <h4>
+                Loan Disbursement
+            </h4>
+
+            <p style="color: #666;">
+                This application has been approved. Enter the interest rate
+                and proceed with disbursement.
+            </p>
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'disburse_loan',
+                    application_id=application.id
+                ) }}"
+                style="max-width: 450px;"
+            >
+
+                <div style="margin-bottom: 18px;">
+
+                    <label for="interest_rate">
+                        <strong>Interest Rate (%)</strong>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="interest_rate"
+                        name="interest_rate"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="10"
+                        required
+                        style="
+                            width: 100%;
+                            padding: 12px;
+                            margin-top: 8px;
+                            border: 1px solid #ccc;
+                            border-radius: 6px;
+                            box-sizing: border-box;
+                        "
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    onclick="return confirm(
+                        'Are you sure you want to disburse this loan?'
+                    );"
+                    style="
+                        background: #198754;
+                        color: white;
+                        border: none;
+                        padding: 12px 22px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    "
+                >
+                    Disburse Loan
+                </button>
+
+            </form>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

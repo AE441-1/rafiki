@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Help | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="info-page help-page">
+    <div class="container">
+        <header class="info-intro">
+            <span class="info-eyebrow"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> HELP CENTER</span>
+            <h1>Use the platform with confidence.</h1>
+            <p>A few simple steps can help you find information, access your account, and complete tasks smoothly.</p>
+        </header>
+
+        <div class="help-list">
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-compass" aria-hidden="true"></i></span>
+                <div>
+                    <h2>Start from Home</h2>
+                    <p>Use Home for the platform overview. Open a section card to read more, and use the arrows to move through the available cards.</p>
+                </div>
+                <a class="btn btn-outline-light" href="{{ url_for('index') }}">Go to Home</a>
+            </article>
+
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-user-plus" aria-hidden="true"></i></span>
+                <div>
+                    <h2>Create or access your account</h2>
+                    <p>Register with accurate details and choose the account type that matches your role. Sign in with the same email and password whenever you return.</p>
+                </div>
+                <div class="help-actions">
+                    <a class="btn btn-primary" href="{{ url_for('register') }}">Create account</a>
+                    <a class="btn btn-outline-light" href="{{ url_for('login') }}">Sign in</a>
+                </div>
+            </article>
+
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+                <div>
+                    <h2>Access your workspace</h2>
+                    <p>Account-specific tools are available after you sign in. The options shown depend on your account, so sign in first if you cannot find a service.</p>
+                </div>
+            </article>
+
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-list-check" aria-hidden="true"></i></span>
+                <div>
+                    <h2>Complete forms carefully</h2>
+                    <p>Fill in every required field, check that your details are correct, and read any on-screen guidance before submitting. Keep your sign-in details private.</p>
+                </div>
+            </article>
+
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-sliders" aria-hidden="true"></i></span>
+                <div>
+                    <h2>Make the page comfortable</h2>
+                    <p>Choose English, Swahili, French, or Portuguese in the header, or change the page theme.</p>
+                </div>
+            </article>
+
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-life-ring" aria-hidden="true"></i></span>
+                <div>
+                    <h2>If something does not work</h2>
+                    <p>Check your connection, confirm that you are signed in, and review the message shown on the page. If the issue continues, return Home and try again.</p>
+                </div>
+            </article>
+
+            <article class="help-item">
+                <span class="info-icon"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
+                <div><h2>Learn about the platform</h2><p>Read about the purpose of Rafiki Mkombozi and the people it serves.</p></div>
+                <a class="btn btn-outline-light" href="{{ url_for('about_us') }}">About Us</a>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}

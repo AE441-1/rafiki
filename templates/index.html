@@ -1,0 +1,1290 @@
+{% extends "base.html" %}
+
+{% block title %}
+Rafiki Mkombozi | Financial & Insurance Intelligence
+{% endblock %}
+
+{% block content %}
+
+<div class="home-page">
+
+<!-- ============================================================
+     HERO SECTION
+============================================================ -->
+
+<section class="hero">
+
+<div class="container">
+
+    <div class="row align-items-center g-5">
+
+        <!-- HERO LEFT -->
+        <div class="col-lg-7">
+
+            <span class="hero-eyebrow">
+                <i class="fa-solid fa-leaf" aria-hidden="true"></i>
+                FINANCIAL SERVICES FOR A RESILIENT FUTURE
+            </span>
+
+            <h1 class="home-hero-title">
+                Finance that understands your world.
+            </h1>
+
+            <p class="hero-text">
+                Assess local climate risks, explore suitable insurance,
+                and connect with financial services built for customers,
+                banks, and insurers.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a
+                    href="{{ url_for('register') }}"
+                    class="btn btn-primary btn-lg"
+                >
+                    Create your account
+                </a>
+
+                <a
+                    href="{{ url_for('login') }}"
+                    class="btn btn-outline-light btn-lg"
+                >
+                    Sign in
+                </a>
+
+            </div>
+
+            <div class="hero-audiences mt-4">
+
+                <small style="color: var(--muted);">
+                    <span>Customers</span>
+                    <span>Banks</span>
+                    <span>Insurers</span>
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- HERO RIGHT -->
+        <div class="col-lg-5">
+
+            <div class="risk-card">
+
+                <div class="overview-card-header">
+
+                    <div class="overview-label">
+                        <span class="overview-mark"><i class="fa-solid fa-chart-line"></i></span>
+                        <span>Platform overview</span>
+                    </div>
+
+                    <span class="status-pill"><span></span> Platform active</span>
+
+                </div>
+
+                <h3 class="overview-title">
+                    A connected financial network
+                </h3>
+
+                <p
+                    style="
+                        color: var(--muted);
+                        line-height: 1.7;
+                        margin-bottom: 25px;
+                    "
+                >
+                    A snapshot of the people and services available
+                    across the platform.
+                </p>
+
+
+                <div class="overview-stats">
+
+                <!-- CUSTOMERS -->
+                <div class="overview-stat">
+                <div class="risk-row">
+
+                    <span>
+                        Registered Customers
+                    </span>
+
+                    <strong>
+                        {{ statistics.customers }}
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="
+                            width:
+                            {% if statistics.customers > 0 %}
+                                100%
+                            {% else %}
+                                0%
+                            {% endif %};
+                        "
+                    ></div>
+
+                </div>
+
+
+                <!-- BANKS -->
+                </div>
+                <div class="overview-stat">
+                <div class="risk-row">
+
+                    <span>
+                        Partner Banks
+                    </span>
+
+                    <strong>
+                        {{ statistics.banks }}
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="
+                            width:
+                            {% if statistics.banks > 0 %}
+                                100%
+                            {% else %}
+                                0%
+                            {% endif %};
+                        "
+                    ></div>
+
+                </div>
+
+
+                <!-- INSURERS -->
+                </div>
+                <div class="overview-stat">
+                <div class="risk-row">
+
+                    <span>
+                        Insurance Providers
+                    </span>
+
+                    <strong>
+                        {{ statistics.insurers }}
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="
+                            width:
+                            {% if statistics.insurers > 0 %}
+                                100%
+                            {% else %}
+                                0%
+                            {% endif %};
+                        "
+                    ></div>
+
+                </div>
+
+
+                <!-- INSURANCE PRODUCTS -->
+                </div>
+                <div class="overview-stat">
+                <div class="risk-row">
+
+                    <span>
+                        Insurance Products
+                    </span>
+
+                    <strong>
+                        {{ statistics.insurance_products }}
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="
+                            width:
+                            {% if statistics.insurance_products > 0 %}
+                                100%
+                            {% else %}
+                                0%
+                            {% endif %};
+                        "
+                    ></div>
+
+                </div>
+
+
+                </div>
+                </div>
+
+                <!-- PLATFORM STATUS -->
+                <div class="overview-footnote">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    <span>Financial, lending, and insurance services in one place</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+<!-- ============================================================
+     LIVE PLATFORM STATISTICS
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-chart-simple" aria-hidden="true"></i><span>Services at a glance</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="section-title home-section-heading">
+
+        <span>
+            PLATFORM SNAPSHOT
+        </span>
+
+        <h2>
+            Services at a glance
+        </h2>
+
+        <p style="color: var(--muted); max-width: 700px;">
+            These figures are retrieved directly from the
+            platform database and represent the current
+            system activity.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- CUSTOMERS -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    CUSTOMERS
+                </div>
+
+                <h3>
+                    {{ statistics.customers }}
+                </h3>
+
+                <p>
+                    Customer accounts currently registered
+                    on the platform.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- BANKS -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    BANKS
+                </div>
+
+                <h3>
+                    {{ statistics.banks }}
+                </h3>
+
+                <p>
+                    Bank accounts participating in the
+                    financial ecosystem.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- INSURERS -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    INSURERS
+                </div>
+
+                <h3>
+                    {{ statistics.insurers }}
+                </h3>
+
+                <p>
+                    Insurance provider accounts currently
+                    registered on the platform.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    PRODUCTS
+                </div>
+
+                <h3>
+                    {{ statistics.insurance_products }}
+                </h3>
+
+                <p>
+                    Active insurance products available
+                    for customer recommendations.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     CONNECTED FINANCIAL ECOSYSTEM
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-users" aria-hidden="true"></i><span>Who we serve</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="section-title home-section-heading">
+
+        <span>
+            WHO WE SERVE
+        </span>
+
+        <h2>
+            Built around a connected ecosystem
+        </h2>
+
+        <p style="color: var(--muted); max-width: 750px;">
+            Rafiki Mkombozi provides different capabilities
+            for customers, financial institutions and
+            insurance providers.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- CUSTOMER -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    01 — CUSTOMER
+                </div>
+
+                <h3>
+                    Financial Profile
+                </h3>
+
+                <p>
+                    Customers can create an account, build
+                    their financial and risk profile, complete
+                    assessments, receive recommendations and
+                    apply for available financial services.
+                </p>
+
+                <a
+                    href="{{ url_for('register') }}"
+                    class="btn btn-primary mt-3"
+                >
+                    Create Customer Account
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- BANK -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    02 — BANK
+                </div>
+
+                <h3>
+                    Lending Management
+                </h3>
+
+                <p>
+                    Banks can review customer loan applications,
+                    examine available risk information, approve
+                    or reject applications, manage disbursements
+                    and monitor repayments.
+                </p>
+
+                <a
+                    href="{{ url_for('register') }}"
+                    class="btn btn-primary mt-3"
+                >
+                    Register as Bank
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- INSURER -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    03 — INSURER
+                </div>
+
+                <h3>
+                    Insurance Intelligence
+                </h3>
+
+                <p>
+                    Insurers can participate in the platform
+                    by providing insurance products that can
+                    be matched with customer risk profiles
+                    and financial needs.
+                </p>
+
+                <a
+                    href="{{ url_for('register') }}"
+                    class="btn btn-primary mt-3"
+                >
+                    Register as Insurer
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     FINANCIAL SERVICES
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Our services</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="section-title home-section-heading">
+
+        <span>
+            OUR SERVICES
+        </span>
+
+        <h2>
+            Tools for confident decisions
+        </h2>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- RISK -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    RISK
+                </div>
+
+                <h3>
+                    Risk Assessment
+                </h3>
+
+                <p>
+                    The platform evaluates selected
+                    environmental and customer indicators
+                    to produce an overall risk assessment.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOANS -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    LOANS
+                </div>
+
+                <h3>
+                    Digital Lending
+                </h3>
+
+                <p>
+                    Customers can submit loan applications
+                    while participating banks can review,
+                    approve, disburse and monitor loans.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- INSURANCE -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    INSURANCE
+                </div>
+
+                <h3>
+                    Insurance Recommendations
+                </h3>
+
+                <p>
+                    Customer risk information can be used
+                    to generate recommendations from active
+                    insurance products available on the platform.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     RISK INTELLIGENCE
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>Risk assessment</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="section-title home-section-heading">
+
+        <span>
+            HOW IT WORKS
+        </span>
+
+        <h2>
+            From local risk to useful action
+        </h2>
+
+        <p style="color: var(--muted); max-width: 750px;">
+            The platform combines customer information with
+            selected risk indicators to support financial and
+            insurance decision-making.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- PROFILE -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    01
+                </div>
+
+                <h3>
+                    Customer Profile
+                </h3>
+
+                <p>
+                    Customer information such as location,
+                    customer type, agricultural activities
+                    and business information can be recorded
+                    in the platform.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ASSESSMENT -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    02
+                </div>
+
+                <h3>
+                    Risk Assessment
+                </h3>
+
+                <p>
+                    The risk engine evaluates drought,
+                    flood and rainfall indicators and
+                    calculates an overall risk score.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECOMMENDATION -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    03
+                </div>
+
+                <h3>
+                    Recommendations
+                </h3>
+
+                <p>
+                    Risk information and customer type
+                    are used to generate relevant insurance
+                    product recommendations.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     PLATFORM ACTIVITY
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>Platform activity</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="section-title home-section-heading">
+
+        <span>
+            PLATFORM ACTIVITY
+        </span>
+
+        <h2>
+            Activity and participation
+        </h2>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- RISK ASSESSMENTS -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    ASSESSMENTS
+                </div>
+
+                <h3>
+                    {{ statistics.risk_assessments }}
+                </h3>
+
+                <p>
+                    Risk assessments currently stored
+                    in the Rafiki Mkombozi database.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOAN APPLICATIONS -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    LOAN APPLICATIONS
+                </div>
+
+                <h3>
+                    {{ statistics.loan_applications }}
+                </h3>
+
+                <p>
+                    Loan applications currently recorded
+                    by customers on the platform.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE LOANS -->
+        <div class="col-md-4">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    ACTIVE LOANS
+                </div>
+
+                <h3>
+                    {{ statistics.active_loans }}
+                </h3>
+
+                <p>
+                    Loans currently active within the
+                    Rafiki Mkombozi lending system.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     HOW THE PLATFORM WORKS
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-list-check" aria-hidden="true"></i><span>Getting started</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="section-title home-section-heading">
+
+        <span>
+            GETTING STARTED
+        </span>
+
+        <h2>
+            A simple path to support
+        </h2>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- STEP 1 -->
+        <div class="col-md-3">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    01
+                </div>
+
+                <h3>
+                    Register
+                </h3>
+
+                <p>
+                    Create an account as a customer,
+                    bank or insurer.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- STEP 2 -->
+        <div class="col-md-3">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    02
+                </div>
+
+                <h3>
+                    Build Profile
+                </h3>
+
+                <p>
+                    Customers provide information required
+                    to establish their financial and risk profile.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- STEP 3 -->
+        <div class="col-md-3">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    03
+                </div>
+
+                <h3>
+                    Assess Risk
+                </h3>
+
+                <p>
+                    The risk engine processes available
+                    risk indicators and produces an assessment.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- STEP 4 -->
+        <div class="col-md-3">
+
+            <div class="feature-card h-100">
+
+                <div class="feature-icon">
+                    04
+                </div>
+
+                <h3>
+                    Access Services
+                </h3>
+
+                <p>
+                    Customers can explore available lending,
+                    risk and insurance services.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     DATABASE ACTIVITY SUMMARY
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-database" aria-hidden="true"></i><span>Live system summary</span></summary>
+<section class="features">
+
+<div class="container">
+
+    <div class="risk-card">
+
+        <div class="row align-items-center g-4">
+
+            <div class="col-lg-7">
+
+                <span class="badge">
+                    LIVE SYSTEM SUMMARY
+                </span>
+
+                <h2 style="margin-top: 20px;">
+                    A connected platform built around
+                    real financial records.
+                </h2>
+
+                <p
+                    style="
+                        color: var(--muted);
+                        line-height: 1.8;
+                    "
+                >
+                    Rafiki Mkombozi uses a centralized database
+                    to connect customer profiles, risk assessments,
+                    loan applications, loans, repayments and
+                    insurance products.
+                </p>
+
+            </div>
+
+
+            <div class="col-lg-5">
+
+                <div class="home-data-track">
+
+                    <div
+                        style="
+                            border: 1px solid var(--border);
+                            border-radius: 12px;
+                            padding: 18px;
+                            text-align: center;
+                        "
+                    >
+
+                        <strong
+                            style="
+                                display: block;
+                                font-size: 28px;
+                                color: var(--primary);
+                            "
+                        >
+                            {{ statistics.risk_assessments }}
+                        </strong>
+
+                        <small style="color: var(--muted);">
+                            Risk Assessments
+                        </small>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            border: 1px solid var(--border);
+                            border-radius: 12px;
+                            padding: 18px;
+                            text-align: center;
+                        "
+                    >
+
+                        <strong
+                            style="
+                                display: block;
+                                font-size: 28px;
+                                color: var(--primary);
+                            "
+                        >
+                            {{ statistics.loan_applications }}
+                        </strong>
+
+                        <small style="color: var(--muted);">
+                            Applications
+                        </small>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            border: 1px solid var(--border);
+                            border-radius: 12px;
+                            padding: 18px;
+                            text-align: center;
+                        "
+                    >
+
+                        <strong
+                            style="
+                                display: block;
+                                font-size: 28px;
+                                color: var(--primary);
+                            "
+                        >
+                            {{ statistics.active_loans }}
+                        </strong>
+
+                        <small style="color: var(--muted);">
+                            Active Loans
+                        </small>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            border: 1px solid var(--border);
+                            border-radius: 12px;
+                            padding: 18px;
+                            text-align: center;
+                        "
+                    >
+
+                        <strong
+                            style="
+                                display: block;
+                                font-size: 28px;
+                                color: var(--primary);
+                            "
+                        >
+                            {{ statistics.insurance_products }}
+                        </strong>
+
+                        <small style="color: var(--muted);">
+                            Insurance Products
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+<!-- ============================================================
+     FINAL CALL TO ACTION
+============================================================ -->
+
+<details class="home-disclosure">
+<summary><i class="fa-solid fa-user-plus" aria-hidden="true"></i><span>Create your account</span></summary>
+<section
+    class="hero"
+    style="padding-top: 70px;"
+>
+
+<div class="container">
+
+    <div class="risk-card text-center">
+
+        <span class="badge">
+            RAFIKI MKOMBOZI
+        </span>
+
+        <h2
+            style="
+                font-size: 42px;
+                margin-top: 25px;
+            "
+        >
+            Build your financial profile.
+        </h2>
+
+        <p
+            class="hero-text mx-auto"
+            style="font-size: 16px;"
+        >
+            Join the connected financial ecosystem and
+            access the services available through
+            Rafiki Mkombozi.
+        </p>
+
+        <div
+            class="hero-buttons justify-content-center"
+        >
+
+            <a
+                href="{{ url_for('register') }}"
+                class="btn btn-primary btn-lg"
+            >
+                Create Account
+            </a>
+
+            <a
+                href="{{ url_for('login') }}"
+                class="btn btn-outline-light btn-lg"
+            >
+                Login
+            </a>
+
+        </div>
+
+
+        <!-- DATABASE SUMMARY -->
+
+        <div
+            class="mt-5"
+            style="
+                border-top:
+                    1px solid var(--border);
+                padding-top: 25px;
+            "
+        >
+
+            <div class="row g-4 home-data-track">
+
+                <div class="col-6 col-md-3">
+
+                    <strong
+                        style="
+                            display: block;
+                            font-size: 25px;
+                            color: var(--primary);
+                        "
+                    >
+                        {{ statistics.customers }}
+                    </strong>
+
+                    <small style="color: var(--muted);">
+                        Customers
+                    </small>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <strong
+                        style="
+                            display: block;
+                            font-size: 25px;
+                            color: var(--primary);
+                        "
+                    >
+                        {{ statistics.banks }}
+                    </strong>
+
+                    <small style="color: var(--muted);">
+                        Banks
+                    </small>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <strong
+                        style="
+                            display: block;
+                            font-size: 25px;
+                            color: var(--primary);
+                        "
+                    >
+                        {{ statistics.insurers }}
+                    </strong>
+
+                    <small style="color: var(--muted);">
+                        Insurers
+                    </small>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <strong
+                        style="
+                            display: block;
+                            font-size: 25px;
+                            color: var(--primary);
+                        "
+                    >
+                        {{ statistics.insurance_products }}
+                    </strong>
+
+                    <small style="color: var(--muted);">
+                        Insurance Products
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+</details>
+
+</div>
+
+<div
+    class="modal fade home-card-modal"
+    id="home-card-modal"
+    tabindex="-1"
+    aria-labelledby="home-card-modal-title"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="home-card-modal-title"></h2>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body" id="home-card-modal-body"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

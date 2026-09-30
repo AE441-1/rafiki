@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | Rafiki Mkombozi{% endblock %}
+
+{% block content %}
+<section class="info-page">
+    <div class="container">
+        <header class="info-intro">
+            <span class="info-eyebrow"><i class="fa-solid fa-leaf" aria-hidden="true"></i> ABOUT RAFIKI MKOMBOZI</span>
+            <h1>Financial support shaped around real-world risk.</h1>
+            <p>Rafiki Mkombozi brings customers, banks, and insurers together to make risk information more useful in everyday financial decisions.</p>
+        </header>
+
+        <div class="info-grid">
+            <article class="info-panel">
+                <span class="info-icon"><i class="fa-solid fa-compass" aria-hidden="true"></i></span>
+                <h2>Our purpose</h2>
+                <p>We help people and financial institutions understand relevant climate and financial risks, then connect those insights with practical lending and insurance services.</p>
+            </article>
+            <article class="info-panel">
+                <span class="info-icon"><i class="fa-solid fa-link" aria-hidden="true"></i></span>
+                <h2>One connected platform</h2>
+                <p>Customer profiles, risk assessments, loan applications, insurance products, and recommendations are brought into one place for clearer decisions.</p>
+            </article>
+            <article class="info-panel">
+                <span class="info-icon"><i class="fa-solid fa-people-group" aria-hidden="true"></i></span>
+                <h2>Who we serve</h2>
+                <p>Customers can build a profile and explore services. Banks can review lending applications, while insurers can manage products and customer protection.</p>
+            </article>
+        </div>
+
+        <div class="info-action-row">
+            <p>Explore the platform and its services.</p>
+            <a class="btn btn-primary" href="{{ url_for('index') }}"><i class="fa-solid fa-house" aria-hidden="true"></i> Return Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

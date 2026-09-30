@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}
+Insurance Protection | Rafiki Mkombozi
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard insurance-catalog-page">
+
+    <div class="container">
+
+        <div class="dashboard-header catalog-header">
+
+            <div>
+
+                <span>
+                    INSURANCE MARKETPLACE
+                </span>
+
+                <h1>
+                    Explore protection
+                </h1>
+
+                <p>
+                    Compare protection products, understand what they cover,
+                    and apply directly from the catalog.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="catalog-toolbar">
+            <div class="catalog-search">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input type="search" id="policy-search" placeholder="Search insurance products" aria-label="Search insurance products">
+            </div>
+            <select id="policy-category" class="form-select" aria-label="Filter by insurance category">
+                <option value="all">All categories</option>
+                {% for category in products|map(attribute='category')|unique|sort %}
+                    <option value="{{ category|lower }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <span class="catalog-count" id="policy-count">{{ products|length }} products</span>
+        </div>
+
+        <div class="row g-4" id="policy-catalog">
+
+            {% for product in products %}
+
+            <div class="col-md-4 policy-product" data-name="{{ product.name|lower }}" data-category="{{ product.category|lower }}">
+
+                <div class="policy-card">
+
+                    <div class="policy-top">
+                        <span class="policy-category">{{ product.category }}</span>
+                        <span class="catalog-icon"><i class="fas fa-shield-halved"></i></span>
+                    </div>
+
+                    <h2>
+                        {{ product.name }}
+                    </h2>
+
+                    <p>
+                        {{ product.coverage }}
+                    </p>
+
+                    <div class="policy-details">
+                        <span><i class="fas fa-calendar-check"></i>{{ product.duration }}</span>
+                        <span><i class="fas fa-check-circle"></i>Partner reviewed</span>
+                    </div>
+
+                    <div class="price">
+                        {% if product.premium_rate_percent %}
+                            {{ "{:g}".format(product.premium_rate_percent) }}% of insured trade value
+                        {% else %}
+                            TZS {{ "{:,.0f}".format(product.premium) }}
+                        {% endif %}
+                    </div>
+
+                    {% if product.category == "Agricultural Trade Insurance" %}
+                        <span class="badge bg-info text-dark w-100 mt-4 py-2">Available when requesting a crop trade</span>
+                    {% elif session.get("role") == "customer" %}
+                        {% set current_status = customer_policy_status.get(product.id) %}
+                        {% if current_status == "active" %}
+                            <span class="badge bg-success w-100 mt-4 py-2">Insurance active</span>
+                        {% elif current_status == "pending" %}
+                            <span class="badge bg-warning text-dark w-100 mt-4 py-2">Application under review</span>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('apply_for_policy', policy_id=product.id) }}" class="mt-4">
+                                <button type="submit" class="btn btn-primary w-100">Apply for this insurance</button>
+                                <small class="d-block text-center mt-2">Your application will be reviewed by the insurer.</small>
+                            </form>
+                        {% endif %}
+                    {% elif not session.get("user_id") %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-primary w-100 mt-4">Log in to apply</a>
+                    {% else %}
+                        <span class="text-muted d-block mt-4">Customer accounts can apply for this insurance.</span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div id="policy-empty" class="catalog-empty" hidden>
+            <i class="fas fa-magnifying-glass"></i>
+            <h2>No products found</h2>
+            <p>Try another product name or choose a different category.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .catalog-header { margin-bottom: 24px; }
+    .catalog-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; flex-wrap: wrap; }
+    .catalog-search { flex: 1 1 280px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid rgba(132, 177, 164, .3); border-radius: 12px; background: rgba(10, 31, 30, .72); }
+    .catalog-search i { color: #56c8aa; }
+    .catalog-search input { width: 100%; padding: 12px 0; border: 0; outline: 0; color: #eefcf7; background: transparent; }
+    .catalog-search input::placeholder { color: #9eb4ad; }
+    #policy-category { width: 190px; background-color: #102625; color: #eefcf7; border-color: rgba(132, 177, 164, .3); }
+    .catalog-count { color: #9eb4ad; font-size: 13px; white-space: nowrap; }
+    .policy-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .catalog-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: #55c9aa; background: rgba(47, 171, 143, .15); }
+    .policy-details { display: flex; flex-wrap: wrap; gap: 12px; color: #9eb4ad; font-size: 12px; margin: 18px 0 2px; }
+    .policy-details span { display: inline-flex; align-items: center; gap: 6px; }
+    .policy-details i { color: #56c8aa; }
+    .catalog-empty { padding: 60px 20px; text-align: center; color: #9eb4ad; }
+    .catalog-empty i { font-size: 30px; color: #56c8aa; margin-bottom: 12px; }
+    .catalog-empty h2 { color: #eefcf7; font-size: 20px; }
+    .catalog-empty p { margin-bottom: 0; }
+    @media (max-width: 576px) { #policy-category { width: 100%; } }
+</style>
+
+<script>
+    const policySearch = document.getElementById('policy-search');
+    const policyCategory = document.getElementById('policy-category');
+    const policyCount = document.getElementById('policy-count');
+    const policyEmpty = document.getElementById('policy-empty');
+    const policyProducts = Array.from(document.querySelectorAll('.policy-product'));
+
+    function filterPolicies() {
+        const search = policySearch.value.trim().toLowerCase();
+        const category = policyCategory.value;
+        let visible = 0;
+
+        policyProducts.forEach((product) => {
+            const matchesSearch = product.dataset.name.includes(search);
+            const matchesCategory = category === 'all' || product.dataset.category === category;
+            const show = matchesSearch && matchesCategory;
+            product.hidden = !show;
+            if (show) visible += 1;
+        });
+
+        policyCount.textContent = `${visible} product${visible === 1 ? '' : 's'}`;
+        policyEmpty.hidden = visible !== 0;
+    }
+
+    policySearch.addEventListener('input', filterPolicies);
+    policyCategory.addEventListener('change', filterPolicies);
+</script>
+
+{% endblock %}

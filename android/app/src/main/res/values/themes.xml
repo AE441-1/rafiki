@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.Rafiki" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:statusBarColor">#F3F7F4</item>
+        <item name="android:navigationBarColor">#F3F7F4</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorAccent">#0F766E</item>
+    </style>
+</resources>
